@@ -9,6 +9,9 @@ Automate the process to add my Banana Republic work schedule to my calendar
 Tasks
 * get work schedule from my gmail
   * technical spike on gmail API
+    * following steps from to get email
+      https://developers.google.com/gmail/api/quickstart/nodejs
+    
   * access gmail
   * find the right email
   * get thatemail
