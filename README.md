@@ -18,5 +18,8 @@ Tasks
 * parse work the email to google calendar format
 * add it to google calendar
 
+12.04.2020
+We will need a server to make the API call to gmail and calendar. that is what server.js is for.
+
 
 

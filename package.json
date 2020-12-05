@@ -1,0 +1,24 @@
+{
+  "name": "banan-schedule-automation",
+  "version": "1.0.0",
+  "description": "Automate banana schedule from my email to my calendar",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Raylin009/Banan-Schedule-Automation.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Raylin009/Banan-Schedule-Automation/issues"
+  },
+  "homepage": "https://github.com/Raylin009/Banan-Schedule-Automation#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6"
+  }
+}
