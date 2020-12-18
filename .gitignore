@@ -105,3 +105,6 @@ dist
 
 # googleApi credential file
 credentials.json
+
+# the token from user's gmail account
+token.json
