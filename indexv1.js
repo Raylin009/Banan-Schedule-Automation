@@ -95,14 +95,35 @@ function getMessageList(auth) {
     userId: 'me',
     includeSpamTrash: false,
     labelIds: 'SENT',
-    maxResults: 5,
+    maxResults: 1,
     q: 'to:cindylin008@gmail.com'
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
     const messages = res.data.messages
+    if(messages.length) {
+      messages.forEach((message) => {
+        // console.log(message)
+        getMessageContent(auth, message.id)
+      });
+    } else {
+      console.log('No messages found.')
+    }
+  });
+}
 
-    console.log(messages)
-
+function getMessageContent(auth, messageId) {
+  const gmail = google.gmail({version: 'v1', auth});
+  gmail.users.messages.get({
+    userId: 'me',
+    id: messageId,
+    format: "full",
+  }, (err, res) => {
+    if (err) return console.log('getMessageContent ran into some issues ' + err);
+    const content = res.data;
+    if(content){
+      console.log(content);
+    } else {
+      console.log('No message content')
+    }
   })
-
 }
