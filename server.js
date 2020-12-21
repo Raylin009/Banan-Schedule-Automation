@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 5111
+
+app.use('/bs',express.static('experiement.json'))
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

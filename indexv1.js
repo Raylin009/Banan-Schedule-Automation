@@ -121,9 +121,23 @@ function getMessageContent(auth, messageId) {
     if (err) return console.log('getMessageContent ran into some issues ' + err);
     const content = res.data;
     if(content){
-      console.log(content);
+      // console.log(content);
+      parseMessageContent(content)
     } else {
       console.log('No message content')
     }
   })
+}
+
+function parseMessageContent(messageObj) {
+  const { payload: { parts } } = messageObj;
+  let planText = '';
+  if(parts.length) {
+    parts.forEach(({ body: { data }}) => {
+      console.log(Buffer.from(data, 'base64').toString('ascii'))
+
+    })
+  } else {
+    console.log('There are no parts in this message object')
+  }
 }
