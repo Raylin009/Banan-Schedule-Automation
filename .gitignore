@@ -103,8 +103,8 @@ dist
 # TernJS port file
 .tern-port
 
-# googleApi credential file
-credentials.json
+# googleApi credential file - gmail
+gmailCredentials.json
 
 # the token from user's gmail account
 token.json
