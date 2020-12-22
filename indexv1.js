@@ -169,8 +169,10 @@ function emailhtmlParserV1(string) {
   collectorV1 = []
   collector.forEach((ele, index, arr) => {
     if((ele.includes("PM") || ele.includes("AM" )) && ele.includes("-")){
+      const date = arr[index-1].match(/\d{2,4}/g)
+      // console.log(justDate)
       collectorV1.push({
-        date: arr[index-1],
+        date: date.join('/'),
         time: arr[index],
         role: arr[index+5],
       })
@@ -200,8 +202,5 @@ function emailhtmlParserV2(string, messageId) {
     }
   }
   go1 = go1.map(brShiftTransformer)
-
-  // console.log(messageId)
-  // console.log(go1)
   return go1
 }
