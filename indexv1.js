@@ -94,9 +94,9 @@ function getMessageList(auth) {
   gmail.users.messages.list({
     userId: 'me',
     includeSpamTrash: false,
-    labelIds: 'SENT',
-    maxResults: 1,
-    q: 'to:cindylin008@gmail.com'
+    labelIds: 'INBOX',
+    maxResults: 10,
+    q: 'from:no-reply-ams@infor.com'
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
     const messages = res.data.messages
@@ -121,7 +121,7 @@ function getMessageContent(auth, messageId) {
     if (err) return console.log('getMessageContent ran into some issues ' + err);
     const content = res.data;
     if(content){
-      // console.log(content);
+      // console.log(content.payload.body.data);
       parseMessageContent(content)
     } else {
       console.log('No message content')
@@ -130,14 +130,74 @@ function getMessageContent(auth, messageId) {
 }
 
 function parseMessageContent(messageObj) {
-  const { payload: { parts } } = messageObj;
   let planText = '';
-  if(parts.length) {
-    parts.forEach(({ body: { data }}) => {
-      console.log(Buffer.from(data, 'base64').toString('ascii'))
-
-    })
+  let res = []
+  const {payload: { body : { data }}} = messageObj;
+  // console.log(Buffer.from(data, 'base64').toString('ascii'))
+  planText = Buffer.from(data, 'base64').toString('ascii')
+  if(planText.includes("<")){
+    // res = [...emailhtmlParserV1(JSON.stringify(planText))];
   } else {
-    console.log('There are no parts in this message object')
+    emailhtmlParserV2(planText);
   }
+  // console.log(res)
+}
+
+function emailhtmlParserV1(string) {
+  string = string.replace(/\r?\n|\r/g, "")
+
+  let curWord = '';
+  let collector = [];
+  let keep = false
+  for(let i = 0; i < string.length; i += 1){
+    let chara = string[i]
+    if(chara === "<"){
+      if(curWord.length){
+        collector.push(curWord)
+      }
+      curWord = ''
+      keep = false
+    } else if (chara === ">"){
+      keep = true
+    } else {
+      if(keep && chara !== " "){
+        curWord += chara;
+      }
+    }
+  }
+
+  collectorV1 = []
+  collector.forEach((ele, index, arr) => {
+    if((ele.includes("PM") || ele.includes("AM" )) && ele.includes("-")){
+      collectorV1.push({
+        date: arr[index-1],
+        time: arr[index],
+        role: arr[index+5],
+      })
+    }
+  })
+
+  console.log(collectorV1)
+  return collectorV1
+}
+
+function emailhtmlParserV2(string) {
+  let go1 = string.replace(/\r?\n|\r/g, " ").split(',')
+  const filterCondition = (ele) => {
+    if(!ele.includes("Off") && !ele.includes("OUTL") && ele !== "Sunday/Dimanche/Domingo"){
+      return ele
+    }
+  }
+  go1 = go1.filter(filterCondition)
+  console.log(go1)
+  
+  function shiftObj(arr) {
+    if(arr.length){
+      // console.log(arr.map(ele=> ele.split(' ')))
+    }
+  }
+
+  // console.log(shiftObj(go1))
+
+  
 }
