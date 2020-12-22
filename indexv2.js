@@ -119,11 +119,11 @@ function parseMessageContent(messageObj, messageId) {
   // console.log(Buffer.from(data, 'base64').toString('ascii'))
   planText = Buffer.from(data, 'base64').toString('ascii')
   if(planText.includes("<")){
-    // res = [...emailhtmlParserV1(JSON.stringify(planText))];
+    res = [...emailhtmlParserV1(JSON.stringify(planText))];
   } else {
     emailhtmlParserV2(planText, messageId);
   }
-  // console.log(res)
+  console.log(res)
 }
 
 function emailhtmlParserV1(string) {
@@ -172,8 +172,19 @@ function emailhtmlParserV2(string, messageId) {
     }
   }
   go1 = go1.filter(filterCondition)
-  console.log(messageId)
-  console.log(go1)
+  go1 = go1.map(ele=>ele.trim())
+  go1 = go1.map(ele=>ele.replace(' - ','-'))
+  const brShiftTransformer = (str) => {
+    const arr = str.split(' ')
+    return {
+      date: arr[0].trim(),
+      time: arr[1].trim(),
+      role: `${arr[3]} ${arr[4]}`,
+    }
+  }
+  go1 = go1.map(brShiftTransformer)
 
-  
+  // console.log(messageId)
+  // console.log(go1)
+  return go1
 }
