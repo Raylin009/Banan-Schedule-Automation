@@ -199,7 +199,7 @@ function emailhtmlParserV2(string, messageId, yearRange) {
     return {
       date: `${date}/${year}`,
       time: arr[1].trim(),
-      role: `${arr[3]} ${arr[4]}`,
+      role: arr[4],
     }
   }
   go1 = go1.map(brShiftTransformer)

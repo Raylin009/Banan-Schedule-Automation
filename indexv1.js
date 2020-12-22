@@ -133,12 +133,23 @@ function parseMessageContent(messageObj) {
   let planText = '';
   let res = []
   const {payload: { body : { data }}} = messageObj;
-  // console.log(Buffer.from(data, 'base64').toString('ascii'))
   planText = Buffer.from(data, 'base64').toString('ascii')
+  const getYear = (messageObj) => {
+    const {payload: { headers }} = messageObj
+    let value = ''
+    headers.forEach((ele) => {
+      if(ele.name === "Subject"){
+        value = ele.value
+      }
+    })
+    return value.match(/\d{4}/g)
+  }
+  const yearRange = getYear(messageObj)
+
   if(planText.includes("<")){
     res = [...emailhtmlParserV1(JSON.stringify(planText))];
   } else {
-    res = [...emailhtmlParserV2(planText)]
+    res = [...emailhtmlParserV2(planText, yearRange)]
   }
   console.log(res)
 }
@@ -178,12 +189,11 @@ function emailhtmlParserV1(string) {
       })
     }
   })
-
-  console.log(collectorV1)
+  // console.log(collectorV1)
   return collectorV1
 }
 
-function emailhtmlParserV2(string, messageId) {
+function emailhtmlParserV2(string, yearRange) {
   let go1 = string.replace(/\r?\n|\r/g, " ").split(',')
   const filterCondition = (ele) => {
     if(!ele.includes("Off") && !ele.includes("OUTL") && ele !== "Sunday/Dimanche/Domingo"){
@@ -195,8 +205,13 @@ function emailhtmlParserV2(string, messageId) {
   go1 = go1.map(ele=>ele.replace(' - ','-'))
   const brShiftTransformer = (str) => {
     const arr = str.split(' ')
+    const date = arr[0]
+    const year = yearRange[0];
+    if(date.slice(0,1)===1){
+      year = yearRange[1]
+    }
     return {
-      date: arr[0].trim(),
+      date: `${date}/${year}`,
       time: arr[1].trim(),
       role: arr[4],
     }
