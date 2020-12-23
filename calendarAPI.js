@@ -2,11 +2,7 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 
-// If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
 const TOKEN_PATH = 'calendarToken.json';
 
 // Load client secrets from a local file.
@@ -93,9 +89,28 @@ function listEvents(auth) {
   });
 }
 
-function createEvent (){
-
-}
+var event = {
+  'summary': 'Google I/O 2015',
+  'location': '800 Howard St., San Francisco, CA 94103',
+  'description': 'A chance to hear more about Google\'s developer products.',
+  'start': {
+    'dateTime': '2020-12-23T09:00:00-07:00',
+    'timeZone': 'America/Los_Angeles',
+  },
+  'end': {
+    'dateTime': '2020-12-23T17:00:00-07:00',
+    'timeZone': 'America/Los_Angeles',
+  },
+  'attendees': [
+  ],
+  'reminders': {
+    'useDefault': false,
+    'overrides': [
+      {'method': 'email', 'minutes': 24 * 60},
+      {'method': 'popup', 'minutes': 10},
+    ],
+  },
+};
 
 function getCalendarListId (auth) {
   const calendar = google.calendar({version: 'v3', auth});
@@ -111,15 +126,30 @@ function getCalendarListId (auth) {
     }else{
       const brCalendarOBJ = findBRCalendar(res.data.items)
       console.log(brCalendarOBJ)
+      addEvent(auth, brCalendarOBJ, event)
     }
   })
 }
 
 function findBRCalendar (arr) {
   const [brCalendar] = arr.filter((ele) => ele.description === 'Banana Republic Schedule')
-  console.log(brCalendar)
+  // console.log(brCalendar)
+  return brCalendar
 }
 
-function addEvent (auth, calendarListId, date, time) {
-
+function addEvent (auth, calendarListId, event) {
+  // const { id } = calendarListId
+  const calendar = google.calendar({version: 'v3', auth});
+  calendar.events.insert({
+    auth: auth,
+    calendarId: calendarListId.id,
+    resource: event,
+  }, function(err, event) {
+    if (err) {
+      console.log('There was an error contacting the Calendar service: ' + err);
+      return;
+    }
+    console.log('Event created: %s', event.data.htmlLink);
+    console.log(event)
+  });
 }
