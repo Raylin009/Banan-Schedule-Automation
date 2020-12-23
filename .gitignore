@@ -111,3 +111,6 @@ calendarCredentials.json
 
 # the token from user's gmail account
 token.json
+
+# the token from user's calendar account
+calendarToken.json
