@@ -107,7 +107,7 @@ dist
 gmailCredentials.json
 
 # googleApi credential file - calendarAPI
-CalendarCredentials.json
+calendarCredentials.json
 
 # the token from user's gmail account
 token.json
