@@ -125,8 +125,9 @@ function getCalendarListId (auth) {
       console.log(err)
     }else{
       const brCalendarOBJ = findBRCalendar(res.data.items)
-      console.log(brCalendarOBJ)
+      // console.log(brCalendarOBJ)
       addEvent(auth, brCalendarOBJ, event)
+      // deleteEvent(auth, eventId)
     }
   })
 }
@@ -138,7 +139,6 @@ function findBRCalendar (arr) {
 }
 
 function addEvent (auth, calendarListId, event) {
-  // const { id } = calendarListId
   const calendar = google.calendar({version: 'v3', auth});
   calendar.events.insert({
     auth: auth,
@@ -150,6 +150,6 @@ function addEvent (auth, calendarListId, event) {
       return;
     }
     console.log('Event created: %s', event.data.htmlLink);
-    console.log(event)
+    console.log(event.data.id)
   });
 }
