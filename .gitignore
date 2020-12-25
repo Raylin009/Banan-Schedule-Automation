@@ -108,10 +108,13 @@ gmailCredentials.json
 
 # googleApi credential file - calendarAPI
 calendarCredentials.json
+calendarCredentials.js
 
 # the token from user's gmail account
 token.json
 
 # the token from user's calendar account
 calendarToken.json
+calendarToken.js
+
 
