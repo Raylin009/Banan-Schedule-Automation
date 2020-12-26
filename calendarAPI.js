@@ -111,8 +111,9 @@ function getCalendarListId (auth) {
     }else{
       const brCalendarOBJ = findBRCalendar(res.data.items)
       // console.log(brCalendarOBJ)
-      addEvent(auth, brCalendarOBJ, event)
-      // deleteEvent(auth, eventId)
+      // addEvent(auth, brCalendarOBJ, event)
+      // deleteEvent(auth, brCalendarOBJ.id,"94pc6l482pkub5hppc5b95kuag")
+      getEventList(auth, brCalendarOBJ.id)
     }
   })
 }
@@ -141,7 +142,7 @@ function addEvent (auth, calendarListId, event) {
 
 
 function deleteEvent (auth, calendarId, eventId) {
-  const calendar = google.calendar({vesion: 'v3', auth});
+  const calendar = google.calendar({version: 'v3', auth});
   calendar.events.delete({
     calendarId,
     eventId,
@@ -149,5 +150,31 @@ function deleteEvent (auth, calendarId, eventId) {
   }, function (err, res) {
     if (err) {console.log(err)}
     return res
+  })
+}
+
+function getEventList (auth, calendarId) {
+  const calendar = google.calendar({version: 'v3', auth});
+  calendar.events.list({
+    calendarId,
+    singleEvents: true,
+    // orderBy: "startTime",
+    maxResults: 2,
+    q: "google"
+    // sorttorder: "descending"
+  }, (err, res) => {
+    if(err) {
+      console.log(err)
+    }
+    const eventArr = res.data.items
+    const pretty = eventArr.map((event) => {
+      return {
+        name: event.summary,
+        date: event.start.dateTime,
+        id: event.id
+      }
+    })
+    console.log(pretty)
+    // console.log(pretty.slice(pretty.length - 5, pretty.length))
   })
 }
