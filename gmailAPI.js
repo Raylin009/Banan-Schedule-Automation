@@ -66,7 +66,7 @@ function getNewToken(oAuth2Client, callback) {
   });
 }
 
-/**
+/*
  * Lists the labels in the user's account.
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.

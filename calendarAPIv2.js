@@ -85,15 +85,22 @@ const generate_auth = async(credentials, token_path) => {
   }
 }
 
+const daysAgo = (days) => {
+  const d = new Date();
+  d.setDate(d.getDate()-days)
+  return d
+};
+// getBREventList returns <Promise> Array[event in BRCalender with in the past 7 days]
 const getBREventList = async() => {
   const credential = await read_credential(CREDE_PATH);
   const auth = await generate_auth(credential, TOKEN_PATH);
   const BRCalendar = await getCalendarListId();
   const calendar = google.calendar({version: 'v3', auth});
+  const aWeekAgo = daysAgo(7);
   return new Promise ((resolve, reject) => {
     calendar.events.list({
       calendarId: BRCalendar.id,
-      timeMin: (new Date()).toISOString(),
+      timeMin: aWeekAgo.toISOString(),
       maxResults: 10,
       singleEvents: true,
       orderBy: 'startTime',
@@ -105,7 +112,7 @@ const getBREventList = async() => {
         console.log('upcoming 10 events:');
         events.map((event, i) => {
           const start = event.start.dateTime || event.start.date;
-          console.log(`${start} - ${event.summary} -${event.id}`);
+          console.log(`${start} - ${event.summary} - ${event.id}`);
         });
         resolve(events);
       } else {
@@ -152,7 +159,7 @@ var event = {
     'timeZone': 'America/Los_Angeles',
   },
   'end': {
-    'dateTime': '2020-12-23T17:00:00-07:00',
+    'dateTime': '2020-12-26T17:00:00-07:00',
     'timeZone': 'America/Los_Angeles',
   },
   'attendees': [
@@ -179,6 +186,7 @@ const addEvent = async(event) => {
     }, (err, res) => {
       if (err) {
         reject('There was an error contacting the Calendar service: ' + err);
+        return
       }
       console.log('Event created: %s', res.data.htmlLink);
       resolve(res.data.id)
@@ -186,7 +194,7 @@ const addEvent = async(event) => {
   })
 }
 
-const deleteEvent = (eventId) => {
+const deleteEvent = async(eventId) => {
   const credential = await read_credential(CREDE_PATH);
   const auth = await generate_auth(credential, TOKEN_PATH);
   const BRCalendar = await getCalendarListId();
@@ -197,15 +205,35 @@ const deleteEvent = (eventId) => {
       eventId,
       sendNotifications: true
     }, function (err, res) {
-      if (err) {reject(err)}
+      if (err) {
+        reject(err)
+        return
+      }
       resolve(`deleted event with id: ${eventId}`)
     })
   })
 }
 
+//update event
+const patch = async(event) => {
+  const credential = await read_credential(CREDE_PATH);
+  const auth = await generate_auth(credential, TOKEN_PATH);
+  const BRCalendar = await getCalendarListId();
+  const calendar = google.calendar({version: 'v3', auth});
+  return new Promise ((resolve, reject) => {
+    calendar.events.patch(event, (err, res) => {
+      if (err) {
+        reject(err)
+        return
+      }
+      resolve(res)
+    })
+  })
+}
 
-
-
+// deleteEvent('df4904u830isf510r6hq7dmm8o')
+// .then(console.log)
+// .catch(console.log)
 
 // getCalendarListId()
 // .then(console.log)

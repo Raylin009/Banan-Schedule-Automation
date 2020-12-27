@@ -83,7 +83,7 @@ var event = {
     'timeZone': 'America/Los_Angeles',
   },
   'end': {
-    'dateTime': '2020-12-23T17:00:00-07:00',
+    'dateTime': '2020-12-26T17:00:00-07:00',
     'timeZone': 'America/Los_Angeles',
   },
   'attendees': [
@@ -111,9 +111,9 @@ function getCalendarListId (auth) {
     }else{
       const brCalendarOBJ = findBRCalendar(res.data.items)
       // console.log(brCalendarOBJ)
-      // addEvent(auth, brCalendarOBJ, event)
+      addEvent(auth, brCalendarOBJ, event)
       // deleteEvent(auth, brCalendarOBJ.id,"94pc6l482pkub5hppc5b95kuag")
-      getEventList(auth, brCalendarOBJ.id)
+      // getEventList(auth, brCalendarOBJ.id)
     }
   })
 }
