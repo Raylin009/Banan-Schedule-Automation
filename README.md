@@ -31,5 +31,17 @@ step 5 Get the code, base it in the terminal
 step 6 It would generate token.json with and list all the token you have in the termnial
 this is as far as I go for now
 
+12.28.2020
+opt1: make 2 api call, one to get all the weekly schedule email
+                       one to get all the monthly schedule email
+      con: * might take longer for 2 round trip
+           * might be more expensive too
+      pro: * there are clear sperateions, more organized
+Opt2: make one call and loop through to array to speate them 
+      con: * messier potentially
+      pro: only one call might be faster
+  note: the time tride of are probably negligible
+
+
 
 
