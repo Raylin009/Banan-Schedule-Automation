@@ -2,26 +2,15 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 
-// If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
 const TOKEN_PATH = 'token.json';
+const CREDE_PATH = 'gmailCredentials.json';
 
-// Load client secrets from a local file.
 fs.readFile('gmailCredentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
-  // Authorize a client with credentials, then call the Gmail API.
   authorize(JSON.parse(content), getMessageList);
 });
 
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
- */
 function authorize(credentials, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
@@ -35,12 +24,6 @@ function authorize(credentials, callback) {
   });
 }
 
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
 function getNewToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -66,11 +49,9 @@ function getNewToken(oAuth2Client, callback) {
   });
 }
 
-/*
- * Lists the labels in the user's account.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
+get_auth().then(console.log).catch(console.log)
+
+
 function listLabels(auth) {
   const gmail = google.gmail({version: 'v1', auth});
   gmail.users.labels.list({
@@ -102,8 +83,8 @@ function getMessageList(auth) {
     const messages = res.data.messages
     if(messages.length) {
       messages.forEach((message) => {
-        // console.log(message)
-        getMessageContent(auth, message.id)
+        console.log(message)
+        // getMessageContent(auth, message.id)
       });
     } else {
       console.log('No messages found.')
