@@ -238,3 +238,5 @@ const patch = async(event) => {
 // getCalendarListId()
 // .then(console.log)
 // .catch(console.log)
+
+module.exports.getBREventList = getBREventList
