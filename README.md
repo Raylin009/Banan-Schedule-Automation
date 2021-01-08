@@ -32,6 +32,8 @@ step 6 It would generate token.json with and list all the token you have in the 
 this is as far as I go for now
 
 12.28.2020
+How to seperat the two types:
+
 opt1: make 2 api call, one to get all the weekly schedule email
                        one to get all the monthly schedule email
       con: * might take longer for 2 round trip
@@ -41,6 +43,48 @@ Opt2: make one call and loop through to array to speate them
       con: * messier potentially
       pro: only one call might be faster
   note: the time tride of are probably negligible
+
+Decision:
+  use snippet becuase it is easier for now
+  if I use suject then I have to look through the payload headers
+  I thought about which would be more resilient for changes but if they change the email templates there is a big chance that my code would not work anyway.
+
+Idea for implamentation:
+  If there is a email that my code cann't read, the return the url to that email and or the email object for me to play with it.
+
+The month long one snippet:
+"Schedule Changes/Changements d&#39;horaire/Cambios de horario DATE/L&#39;DATE/LA FECHA SCHEDULE/LE PLANNING/EL HORARIO UPDATED/MIS À JOUR/ACTUALIZADO DEPARTMENT/DÉPARTEMENT/DEPARTAMENTO ACTIVITY/"
+
+The week long one snippet:
+Sunday/Dimanche/Domingo, 11/22 01:00PM - 10:00PM WRK OUT_SALES, 01049_OUTL, 01049_OUTL_SALES_FLOOR Monday/Lundi/Lunes, 11/23 Off/Congé/Inactivo Tuesday/Mardi/Martes, 11/24 Off/Congé/Inactivo Wednesday/
+
+12.28.2020
+tested speed for getting and parshing the email array in a loop and a map
+
+loop is around 390 ms
+map is around 450 ms
+
+12.28.2020
+shit, I need the date that email is sent too to see which email is the latest change
+
+** Leason Learned **
+
+You don't refind the app as you go
+
+you need to run all the way through first to see all the problem so you can evaluate the sevarity of the issues. 
+
+if you fix and refine as you go, you will spend a lot of time on something that becamse irrelivent later down the road.
+
+12.28.2020
+shit, what if you had a shift on a date then a schdule changes and you don't have the shift on that date no more
+
+right now I am using the list of shift from gmail and see if they need to be added or updated. this will cause problem becuase it would not remove the shift that's taken away in the later changes
+
+but if there is a shift that is taken away, I would want to be alerted for that
+
+in fact, I would like to be alerted of any changes to my schudule
+
+
 
 
 
