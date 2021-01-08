@@ -101,7 +101,7 @@ const getBREventList = async() => {
     calendar.events.list({
       calendarId: BRCalendar.id,
       timeMin: aWeekAgo.toISOString(),
-      maxResults: 10,
+      maxResults: 5,
       singleEvents: true,
       orderBy: 'startTime',
     },  (err, res) => {
@@ -231,6 +231,12 @@ const patch = async(event) => {
   })
 }
 
+const initCalendar = async() => {
+  const credential = await read_credential(CREDE_PATH);
+  const auth = await generate_auth(credential, TOKEN_PATH);
+  const calendar = google.calendar({version: 'v3', auth});
+  return calendar
+}
 // deleteEvent('df4904u830isf510r6hq7dmm8o')
 // .then(console.log)
 // .catch(console.log)
@@ -239,4 +245,5 @@ const patch = async(event) => {
 // .then(console.log)
 // .catch(console.log)
 
-module.exports.getBREventList = getBREventList
+module.exports.getBREventList = getBREventList;
+module.exports.initCalendar = initCalendar;
