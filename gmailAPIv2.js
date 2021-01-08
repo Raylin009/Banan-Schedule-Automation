@@ -152,23 +152,117 @@ const getMessageContent = async(messageId) => {
     })
   })
 }
-const { email_Id_List } = module.require('./testEmailId.js');
 
-const weeklyScheudle = email_Id_List.forEach(async(ele, index, arr) => {
-  const email = await getMessageContent(ele.id);
-  if(email.snippet.includes('Sunday/Dimanche/Domingo')){
-    console.log(`${email.id} - ${email.snippet.slice(0,24)}`)
-  }else {
-    console.log(email.snippet)
+const getScheduleYear = (messageObj) => {
+  const {payload: {headers}} = messageObj;
+  let value = '';
+  headers.forEach((ele) => {
+    if(ele.name === "Subject"){
+      value = ele.value
+    }
+  })
+  return value.match(/\d{4}/g)
+}
+
+
+function emailhtmlParserV1(string) {
+  string = string.replace(/\r?\n|\r/g, "")
+  
+  let curWord = '';
+  let collector = [];
+  let keep = false
+  for(let i = 0; i < string.length; i += 1){
+    let chara = string[i]
+    if(chara === "<"){
+      if(curWord.length){
+        collector.push(curWord)
+      }
+      curWord = ''
+      keep = false
+    } else if (chara === ">"){
+      keep = true
+    } else {
+      if(keep && chara !== " "){
+        curWord += chara;
+      }
+    }
   }
-})
+  
+  collectorV1 = []
+  collector.forEach((ele, index, arr) => {
+    if((ele.includes("PM") || ele.includes("AM" )) && ele.includes("-")){
+      const date = arr[index-1].match(/\d{2,4}/g)
+      // console.log(justDate)
+      collectorV1.push({
+        date: date.join('/'),
+        time: arr[index],
+        role: arr[index+5],
+      })
+    }
+  })
+  // console.log(collectorV1)
+  return collectorV1
+}
 
-// console.log(email_Id_List)
+function emailhtmlParserV2(string, yearRange) {
+  let go1 = string.replace(/\r?\n|\r/g, " ").split(',')
+  const filterCondition = (ele) => {
+    if(!ele.includes("Off") && !ele.includes("OUTL") && ele !== "Sunday/Dimanche/Domingo"){
+      return ele
+    }
+  }
+  go1 = go1.filter(filterCondition)
+  go1 = go1.map(ele=>ele.trim())
+  go1 = go1.map(ele=>ele.replace(' - ','-'))
+  const brShiftTransformer = (str) => {
+    const arr = str.split(' ')
+    const date = arr[0]
+    const year = yearRange[0];
+    if(date.slice(0,1)===1){
+      year = yearRange[1]
+    }
+    return {
+      date: `${date}/${year}`,
+      time: arr[1].trim(),
+      role: arr[4],
+    }
+  }
+  go1 = go1.map(brShiftTransformer)
+  return go1
+}
 
-// console.log(weeklyScheudle)
+const parseMessageContent = (messageObj) => {
+  let planText = '';
+  let res = [];
+  const {payload: { body : { data }}} = messageObj;
+  planText = Buffer.from(data, 'base64').toString('ascii')
+  const yearRange = getScheduleYear(messageObj)
+  if(messageObj.snippet.includes('Schedule Changes')){
+    res = [...emailhtmlParserV1(JSON.stringify(planText))];
+  }else if (messageObj.snippet.includes('Sunday/Dimanche/Domingo')){
+    res = [...emailhtmlParserV2(planText, yearRange)]
+  }
+  return res
+}
 
-// getMessageContent('176794e0d843c7c5').then(console.log).catch((e) => (console.log('fuck', e)))
+const initGmail = async() => {
+  const auth = await generate_auth(CREDE_PATH, TOKEN_PATH)
+  const gmail = google.gmail({version: 'v1', auth});
+  return gmail
+}
 
+// const parse = (data) => {
+//   const arr = parseMessageContent(data)
+//   console.log(arr)
+// }
+
+// getMessageContent('175c4fc236fa7270').then(parse).catch((e) => (console.log('fuck', e)))
+// getMessageContent('175d49ec2bb6430b').then(parse).catch((e) => (console.log('fuck', e)))
+
+module.exports.getMessageList = getMessageList;
+module.exports.getMessageContent = getMessageContent;
+module.exports.parseMessageContent = parseMessageContent;
+module.exports.initGmail = initGmail;
 
 
 
