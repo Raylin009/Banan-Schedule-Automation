@@ -4,7 +4,7 @@
   "description": "Automate banana schedule from my email to my calendar",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "server": "nodemon server.js"
   },
   "repository": {
