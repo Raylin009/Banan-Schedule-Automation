@@ -84,8 +84,7 @@ but if there is a shift that is taken away, I would want to be alerted for that
 
 in fact, I would like to be alerted of any changes to my schudule
 
+01.13.2021
 
-
-
-
+1304: organize example data with test into a folder and see if that I can still run test with "npm run test"
 
