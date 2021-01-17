@@ -88,3 +88,7 @@ in fact, I would like to be alerted of any changes to my schudule
 
 1304: organize example data with test into a folder and see if that I can still run test with "npm run test"
 
+01.17.2021
+
+I need to have a grand plan. I need draw a plan for how each function is invoked it to. Step by Step 
+
