@@ -72,7 +72,6 @@ const auto_update_shift = async() => {
   const email_Content_List = await Promise.all(
     email_Id_List.map((ele) => (getMessageContent(ele.id)))
   )
-
   //*** HAVE EMAIL CONTENT ARRAY */
 
   const shifts_Array = email_Content_List.map((email) => {
