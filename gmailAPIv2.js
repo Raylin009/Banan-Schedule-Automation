@@ -136,7 +136,8 @@ const getMessageContent = async(messageId) => {
   const gmail = google.gmail({version: 'v1', auth});
   return new Promise ((resolve, reject) => {
     gmail.users.messages.get({
-
+        userId: "me",
+        id: messageId,
     }, (err, res) => {
       if (err) return reject('getMessageContent ran into some issues ' + err);
       const content = res.data;
