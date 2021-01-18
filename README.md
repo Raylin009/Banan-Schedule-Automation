@@ -92,3 +92,45 @@ in fact, I would like to be alerted of any changes to my schudule
 
 I need to have a grand plan. I need draw a plan for how each function is invoked it to. Step by step 
 
+01.18.2021
+
+Grand Plan: 
+
+* Gmail Side 
+This app will get the last X email from Ray's gmail sent by "no-reply-ams@infor.com"
+
+It will parse the email depending on the email template
+
+It will compile a master shift schedule with all the dates included in the emails regardless the email indicates there is shift for that day
+
+It will indicate on the master shift schedule whether the user have shifts for the date range that the emails covered
+
+* Calendar Side
+It will takes in the master shift scheudule 
+
+loop through all the dates
+
+  get shift event for that date if any
+
+  check if it matech the shift in the master schedule{
+    if match
+      do nothing
+    if don't match{
+      make changes to the calendare to match master shift schedule{
+        if(master schulde have shift for that date){
+          if(calendar have a shift on that date as well){
+            modify the shift to match the master schedule
+          }else if the calendar doesn't have the shift {
+            add the shift from master shift schedule to calendar
+          }
+        } doesn't {
+          alert user
+          rm the shift
+        }
+      }
+    }
+    log update in the event description if the event exist
+  }
+
+
+
