@@ -163,8 +163,9 @@ const getScheduleYear = (messageObj) => {
   return value.match(/\d{4}/g)
 }
 
-
+//htmlParser
 function emailhtmlParserV1(string) {
+
   string = string.replace(/\r?\n|\r/g, "")
   
   let curWord = '';
@@ -202,7 +203,7 @@ function emailhtmlParserV1(string) {
   // console.log(collectorV1)
   return collectorV1
 }
-
+//plain text
 function emailhtmlParserV2(string, yearRange) {
   let go1 = string.replace(/\r?\n|\r/g, " ").split(',')
   const filterCondition = (ele) => {
