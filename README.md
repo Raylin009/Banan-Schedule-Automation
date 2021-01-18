@@ -90,5 +90,5 @@ in fact, I would like to be alerted of any changes to my schudule
 
 01.17.2021
 
-I need to have a grand plan. I need draw a plan for how each function is invoked it to. Step by Step 
+I need to have a grand plan. I need draw a plan for how each function is invoked it to. Step by step 
 
