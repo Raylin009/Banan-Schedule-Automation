@@ -65,9 +65,32 @@ const emailParser_base64 = (base64Code) => {
 const emailContnetParser_htmlTemplate = (content) => {
   let schedule = [];
   const htmlContent = parse(`<div>${content}</div>`)
-  console.log(htmlContent.firstChild.structure)
+  const table = htmlContent.querySelector('.contentTable')
+  const triversTableCollums = (tableRow) => {
+    let column = tableRow.firstChild;
+    let columnText = [];
+    for(;!!column;column = column.nextSibling){
+      columnText.push(column.text)
+    }
+    return(columnText)
+    // console.log(tableRow.firstChild.text)
 
-  return schedule
+    // while //queue.0 has childen node, keep looping
+  }
+
+
+  const subject_row = table.firstChild.nextSibling
+  // console.log(subject_row.firstChild.text)
+  const subject_line = triversTableCollums(subject_row)
+  console.log(subject_line)
+  // console.log(triversTableCollums(subject_row))
+  // console.log(htmlContent.firstChild.structure)
+  // console.log(htmlContent.querySelector('.contentTable').firstChild)
+  // console.log(table_catigories.structure)
+  // console.log(table_catigories.structuredText)
+
+
+  // return schedule
 
 };
 const test64 = emailParser_base64(email_html.payload.body.data);
