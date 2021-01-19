@@ -64,8 +64,9 @@ const emailParser_base64 = (base64Code) => {
  */
 const emailContnetParser_htmlTemplate = (content) => {
   let schedule = [];
-  const htmlContent = parse(content)
-  console.log(htmlContent.querySelector("<tr>"))
+  const htmlContent = parse(`<div>${content}</div>`)
+  console.log(htmlContent.firstChild.structure)
+
   return schedule
 
 };
