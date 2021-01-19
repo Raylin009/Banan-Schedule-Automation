@@ -1,4 +1,5 @@
 const { email_planText, email_html } = require("./testEmailId")
+const { parse } = require("node-html-parser")
 
 /**
  getEmailMetaInfo
@@ -62,9 +63,15 @@ const emailParser_base64 = (base64Code) => {
     ]
  */
 const emailContnetParser_htmlTemplate = (content) => {
-  return content
-};
+  let schedule = [];
+  const htmlContent = parse(content)
+  console.log(htmlContent.querySelector("<tr>"))
+  return schedule
 
+};
+const test64 = emailParser_base64(email_html.payload.body.data);
+const testhtml = emailContnetParser_htmlTemplate(test64)
+console.log(testhtml);
 
 /**
   emailContnetParser_planTextTemplate
