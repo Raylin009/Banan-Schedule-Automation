@@ -132,5 +132,13 @@ loop through all the dates
     log update in the event description if the event exist
   }
 
+  01.19.2021
+  Working on emailParser_UTL.js 
+  out of the 4 functions in that file I got first 2 to work yesterday. 
+  
+  Today I am working on emailContentParser_htmlTemplate function
+    I got to read the html template with the next of "node-html-parser"
+    I got to trivers the html table columns
+
 
 

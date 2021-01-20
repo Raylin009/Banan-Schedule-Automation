@@ -1,5 +1,6 @@
-const { email_planText, email_html } = require("./testEmailId")
-const { parse } = require("node-html-parser")
+const { email_planText, email_html } = require("./testEmailId");
+const { brShift } = require("./brShift");
+const { parse } = require("node-html-parser");
 
 /**
  getEmailMetaInfo
@@ -66,36 +67,45 @@ const emailContnetParser_htmlTemplate = (content) => {
   let schedule = [];
   const htmlContent = parse(`<div>${content}</div>`)
   const table = htmlContent.querySelector('.contentTable')
-  const triversTableCollums = (tableRow) => {
+  const triversTableColumns = (tableRow) => {
     let column = tableRow.firstChild;
     let columnText = [];
     for(;!!column;column = column.nextSibling){
       columnText.push(column.text)
     }
     return(columnText)
-    // console.log(tableRow.firstChild.text)
+  };
+  const triviersTableRows = (table) => {
+    let row = table.firstChild;
+    let rowArr = [];
+    for(;!!row;row = row.nextSibling){
+      const paresedRow = triversTableColumns(row)
+      rowArr.push(paresedRow)
+    }
+    return rowArr
+  };
+  //HTML to Matrix success
+  // console.log(triviersTableRows(table))
+  // console.log(triviersTableRows(table).length)
 
-    // while //queue.0 has childen node, keep looping
-  }
+  const matrixToMasterScheduel = (matrix) => {
+    let masterSchedule = {}
+    let shiftTemp = brShift("HTML",matrix[0]);
+    for(let i = 1; i < matrix.length; i +=1 ){
+      const curShift = shiftTemp(matrix[i])
+      masterSchedule[curShift.date] = curShift;
+    }
+    return masterSchedule
+  };
 
+const scheduleMatrix = triviersTableRows(table);
+const masterSchedule = matrixToMasterScheduel(scheduleMatrix)
 
-  const subject_row = table.firstChild.nextSibling
-  // console.log(subject_row.firstChild.text)
-  const subject_line = triversTableCollums(subject_row)
-  console.log(subject_line)
-  // console.log(triversTableCollums(subject_row))
-  // console.log(htmlContent.firstChild.structure)
-  // console.log(htmlContent.querySelector('.contentTable').firstChild)
-  // console.log(table_catigories.structure)
-  // console.log(table_catigories.structuredText)
-
-
-  // return schedule
-
+return masterSchedule
 };
-const test64 = emailParser_base64(email_html.payload.body.data);
-const testhtml = emailContnetParser_htmlTemplate(test64)
-console.log(testhtml);
+// const test64 = emailParser_base64(email_html.payload.body.data);
+// const testhtml = emailContnetParser_htmlTemplate(test64)
+// console.log(Object.keys(testhtml).length);
 
 /**
   emailContnetParser_planTextTemplate
