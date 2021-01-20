@@ -35,7 +35,7 @@ module.exports.calendar_obj = [
   }
 ];
 
-module.exports.email_weekly = {
+module.exports.email_planText = {
   "id": "17674efad6d4990e",
   "threadId": "17674efad6d4990e",
   "labelIds": [
@@ -152,7 +152,7 @@ module.exports.email_weekly = {
   "internalDate": "1608279632000"
 };
 
-module.exports.email_monthly = {
+module.exports.email_html = {
   "id": "176503c927789c52",
   "threadId": "176503c927789c52",
   "labelIds": [

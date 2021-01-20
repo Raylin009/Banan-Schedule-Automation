@@ -13,6 +13,7 @@ const get_Email_Ids = async(parameters) => {
   })
 }
 
+
 const get_Email_Content = async(parameters) => {
   const gmail = await initGmail()
   return new Promise((resolve, reject) => {
@@ -64,9 +65,30 @@ const auto_update_shift = async() => {
     maxResults: 5,
     q: 'from:no-reply-ams@infor.com'
   };
-  const email_Id_List = await get_Email_Ids(emaiListParam)
-  
-  return(email_Id_List)
+  const email_Id_List = await get_Email_Ids(emailListParam)
+  // return(email_Id_List)
+  //*** HAVE EMAIL ID ARRAY */
+
+  const email_Content_List = await Promise.all(
+    email_Id_List.map((ele) => (getMessageContent(ele.id)))
+  )
+  //*** HAVE EMAIL CONTENT ARRAY */
+
+  const shifts_Array = email_Content_List.map((email) => {
+    if(email.payload.mimeType === "text/html"){
+      //parser 1
+    }else if(email.payload.mimeType === "text/plain"){
+      //paresr 2
+    }else{
+      //alert me
+    }
+  })
+
+
+  return email_Content_List
+
+
+
   /* 
   parse email
     need to get: 
@@ -90,11 +112,10 @@ const auto_update_shift = async() => {
   */
 }
 
-/*
+// console.log('ha')
 auto_update_shift()
 .then(console.log)
 .catch(console.log)
-*/
 
 // get_Email_Content({
 //   userId: 'me',
