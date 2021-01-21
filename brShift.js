@@ -44,7 +44,23 @@ const brShift = (flag, keyArr) => {
     }
 
   }else if(flag === "PLAN_TEXT"){
-
+    let valArr = keyArr;
+    let shiftHours = null
+    if(!!valArr[2]){
+      if(valArr[2].includes("PM") || valArr[2].includes("AM")){
+        shiftHours = valArr[2].split(" - ")
+      }
+    }
+    const plTxtShiftTemp = {
+      date: valArr[1] || null,
+      schedule: shiftHours|| [],
+      updated: null,
+      department: valArr[6] || null,
+      activity: valArr[3] || null,
+      store: valArr[5] || null,
+      job: valArr[4] || null,
+    }
+    return plTxtShiftTemp
   }else{
     throw Error(`brShift function have to have 'flag' value either 'HTML' or 'PLAN_TEXT', instead got ${flag}`)
   }
