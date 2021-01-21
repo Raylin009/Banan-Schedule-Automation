@@ -122,9 +122,74 @@ return masterSchedule
       },....
     ]
  */
-const emailContnetParser_planTextTemplate = (content) => {
-  return content
+const plTxtSpliter = (regRule) => {
+  const splitIndex = '|_split_|';
+  return (str) => {
+    return str.replace(regRule, splitIndex).split(splitIndex)
+  };
 };
+
+const emailContnetParser_planTextTemplate = (content, year) => {
+  // const splitEverything = (pTxtTempStr) => {
+  //   const splitRule = new RegExp(/(\r\n\r\n|\r\n|,\s|\s\s)/g);
+  //   const splitIndex = '|_split_|';
+  //   return pTxtTempStr.replace(splitRule, splitIndex).split(splitIndex)
+  // }
+  // return splitEverything(content)
+
+  const splitByRule = (regRule) => {
+    const splitIndex = '|_split_|';
+    return (str) => {
+      return str.replace(regRule, splitIndex).split(splitIndex)
+    };
+  };
+  const dateDivider = new RegExp(/\r\n\r\n/g)
+  const splitByDate = splitByRule(dateDivider)
+  const categoriesDivider = new RegExp(/(\r\n|,\s|\s\s)/g)
+  const splitByCategories = splitByRule(categoriesDivider)
+  const scheduleArr = [];
+  splitByDate(content).forEach(
+    (shift, index)=>{
+      if(shift.length){
+        scheduleArr.push(splitByCategories(shift))
+      }
+    }
+  )
+  const masterSchedule = {};
+
+  scheduleArr.forEach((shiftArr) => {
+    const shift = brShift("PLAN_TEXT", shiftArr);
+    const shiftDate = `${shift.date}/${year}`
+    masterSchedule[shiftDate] = {...shift, date: shiftDate}
+  });
+
+  const handleNewYear = (scheduleObj) => {
+    const dateArr = Object.keys(scheduleObj);
+    const getMonth = (str)=>(str.slice(0,2));
+    const stMonth = getMonth(dateArr[0]);
+    const lastMonth = getMonth(dateArr[dateArr.length - 1]);
+    if(stMonth === '12' && lastMonth === '01'){
+      dateArr.forEach((key)=> {
+        const [m,d,y] = key.split('/');
+        const nextY = JSON.stringify(parseInt(y) + 1)
+        const nextYDateStr = `${m}/${d}/${nextY}`;
+        if(getMonth(key) === '01'){
+          const updatedShift = {
+            ...scheduleObj[key],
+            date: nextYDateStr,
+          };
+          delete scheduleObj[key];
+          scheduleObj[nextYDateStr] = updatedShift;
+        }
+      })
+    }
+  };
+  handleNewYear(masterSchedule);
+  return masterSchedule
+};
+const test64 = emailParser_base64(email_planText.payload.body.data);
+const testPlanText = emailContnetParser_planTextTemplate(test64, 2020)
+console.log(testPlanText);
 
 module.exports.getEmailMetaInfo = getEmailMetaInfo;
 module.exports.emailParser_base64 = emailParser_base64;
