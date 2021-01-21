@@ -1,0 +1,34 @@
+"
+        Sunday/Dimanche/Domingo, 12/27
+    \r\n02:00PM - 10:00PM  WRK
+    \r\nOUT_SALES, 01049_OUTL, 01049_OUTL_SALES_FLOOR
+
+\r\n\r\nMonday/Lundi/Lunes, 12/28
+    \r\nOff/CongC)/Inactivo
+    
+\r\n\r\nTuesday/Mardi/Martes, 12/29
+    \r\nOff/CongC)/Inactivo\r\n\r\nWednesday/Mercredi/MiC)rcoles, 12/30\r\nOff/CongC)/Inactivo\r\n\r\nThursday/Jeudi/Jueves, 12/31\r\nOff/CongC)/Inactivo\r\n\r\nFriday/Vendredi/Viernes, 01/01\r\nOff/CongC)/Inactivo\r\n\r\nSaturday/Samedi/SC!bado, 01/02\r\nOff/CongC)/Inactivo\r\n\r\n"
+
+        Sunday/Dimanche/Domingo, 12/27
+        02:00PM - 10:00PM  WRK
+        OUT_SALES, 01049_OUTL, 01049_OUTL_SALES_FLOOR
+
+        Monday/Lundi/Lunes, 12/28
+        Off/CongC)/Inactivo
+
+        Tuesday/Mardi/Martes, 12/29
+        Off/CongC)/Inactivo
+
+        Wednesday/Mercredi/MiC)rcoles, 12/30
+        Off/CongC)/Inactivo
+
+        Thursday/Jeudi/Jueves, 12/31
+        Off/CongC)/Inactivo
+
+        Friday/Vendredi/Viernes, 01/01
+        Off/CongC)/Inactivo
+
+        Saturday/Samedi/SC!bado, 01/02
+        Off/CongC)/Inactivo
+
+
