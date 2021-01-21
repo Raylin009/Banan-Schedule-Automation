@@ -1,6 +1,14 @@
 const { getBREventList, initCalendar } = require('./calendarAPIv2.js');
-const { getMessageList, getMessageContent, parseMessageContent, initGmail } = require('./gmailAPIv2.js');
-const fs = require('fs');
+const { getMessageList, 
+        getMessageContent, 
+        parseMessageContent, 
+        initGmail 
+      } = require('./gmailAPIv2.js');
+const { getEmailMetaInfo, 
+        emailParser_base64,
+        emailContnetParser_htmlTemplate,
+        emailContnetParser_planTextTemplate,
+      } = require('./emailParser_UTL.js');
 
 const get_Email_Ids = async(parameters) => {
   const gmail = await initGmail()
@@ -73,19 +81,32 @@ const auto_update_shift = async() => {
     email_Id_List.map((ele) => (getMessageContent(ele.id)))
   )
   //*** HAVE EMAIL CONTENT ARRAY */
+  let masterSchedule = {};
 
-  const shifts_Array = email_Content_List.map((email) => {
-    if(email.payload.mimeType === "text/html"){
-      //parser 1
-    }else if(email.payload.mimeType === "text/plain"){
-      //paresr 2
+  email_Content_List.map((email) => {
+    const emailType = email.payload.mimeType;
+    const metaInfo = getEmailMetaInfo(email);
+    const emailBody = emailParser_base64(email.payload.body.data);
+    let shiftsInEmail = {};
+    if(emailType === "text/html"){
+      shiftsInEmail = emailContnetParser_htmlTemplate(emailBody);
+    }else if(emailType === "text/plain"){
+      let year = new Date(metaInfo.dateRecieved)
+      year = JSON.stringify(year.getFullYear());
+      shiftsInEmail = emailContnetParser_planTextTemplate(emailBody, year)
     }else{
       //alert me
+      throw Error("email_Content_List mapping problem, see index.js line 86 to 99");
+    }
+    masterSchedule = {
+      ...masterSchedule,
+      ...shiftsInEmail,
     }
   })
 
+  console.log(masterSchedule)
 
-  return email_Content_List
+  // return email_Content_List
 
 
 
