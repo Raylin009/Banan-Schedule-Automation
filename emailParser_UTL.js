@@ -92,7 +92,7 @@ const emailContnetParser_htmlTemplate = (content, metaInfo) => {
     let shiftTemp = brShift("HTML",matrix[0]);
     for(let i = 1; i < matrix.length; i +=1 ){
       const curShift = shiftTemp(matrix[i])
-      curShift.emailMetaIndo = metaInfo
+      curShift.srcEmailInfo = metaInfo
       masterSchedule[curShift.date] = curShift;
     }
     return masterSchedule
@@ -129,14 +129,13 @@ const plTxtSpliter = (regRule) => {
   };
 };
 
-const emailContnetParser_planTextTemplate = (content, year) => {
+const emailContnetParser_planTextTemplate = (content, metaInfo) => {
   // const splitEverything = (pTxtTempStr) => {
   //   const splitRule = new RegExp(/(\r\n\r\n|\r\n|,\s|\s\s)/g);
   //   const splitIndex = '|_split_|';
   //   return pTxtTempStr.replace(splitRule, splitIndex).split(splitIndex)
   // }
   // return splitEverything(content)
-
   const splitByRule = (regRule) => {
     const splitIndex = '|_split_|';
     return (str) => {
@@ -156,11 +155,31 @@ const emailContnetParser_planTextTemplate = (content, year) => {
     }
   )
   const masterSchedule = {};
+  const getDurationFromSubject = (subjectStr) => {
+    const strL = subjectStr.length;
+    const yearStr = subjectStr.slice(strL-23);
+    const [st, end] = yearStr.split(' - ');
+    const [stM, stD, stY] = st.split('/');
+    const [endM, endD, endY] = end.split('/');
+    const duration = {
+      [stM]: stY,
+      [endM]: endY,
+    }
+    return duration;
+  }
+  const monthToYear = getDurationFromSubject(metaInfo.subject)
+  // console.log(monthToYear)
 
   scheduleArr.forEach((shiftArr) => {
     const shift = brShift("PLAN_TEXT", shiftArr);
-    const shiftDate = `${shift.date}/${year}`
-    masterSchedule[shiftDate] = {...shift, date: shiftDate}
+    const [mm, dd] = shift.date.split('/')
+    const shiftDate = `${shift.date}/${monthToYear[mm]}`
+    // console.log(shiftDate)
+    masterSchedule[shiftDate] = {
+      ...shift,
+      date: shiftDate,
+      srcEmailInfo: metaInfo,
+    }
   });
 
   const handleNewYear = (scheduleObj) => {
@@ -184,12 +203,13 @@ const emailContnetParser_planTextTemplate = (content, year) => {
       })
     }
   };
-  handleNewYear(masterSchedule);
+  // handleNewYear(masterSchedule);
   return masterSchedule
 };
 const test64 = emailParser_base64(email_planText.payload.body.data);
-const testPlanText = emailContnetParser_planTextTemplate(test64, 2020)
-console.log(testPlanText);
+const metaInfo = getEmailMetaInfo(email_planText)
+const testPlanText = emailContnetParser_planTextTemplate(test64, metaInfo)
+// console.log(testPlanText);
 
 module.exports.getEmailMetaInfo = getEmailMetaInfo;
 module.exports.emailParser_base64 = emailParser_base64;
