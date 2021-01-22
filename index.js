@@ -9,6 +9,7 @@ const { getEmailMetaInfo,
         emailContnetParser_htmlTemplate,
         emailContnetParser_planTextTemplate,
       } = require('./emailParser_UTL.js');
+// const { email_Id_List } = require('./testEmailId.js')
 
 const get_Email_Ids = async(parameters) => {
   const gmail = await initGmail()
@@ -60,12 +61,6 @@ const parseEmail = (emailObj) => {
 const auto_update_shift = async() => {
   const calendar = initCalendar();
   const gmail = initGmail();
-  /* Phase I : populate schedule*/
-  //in the order of oldest email to the newest
-    //include all the dates in the emal
-  //populate and update the master schedule
-
-  //get emal list
   const emailListParam = {
     userId: 'me',
     includeSpamTrash: false,
@@ -74,7 +69,7 @@ const auto_update_shift = async() => {
     q: 'from:no-reply-ams@infor.com'
   };
   const email_Id_List = await get_Email_Ids(emailListParam)
-  // return(email_Id_List)
+
   //*** HAVE EMAIL ID ARRAY */
 
   const email_Content_List = await Promise.all(
@@ -91,9 +86,9 @@ const auto_update_shift = async() => {
     if(emailType === "text/html"){
       shiftsInEmail = emailContnetParser_htmlTemplate(emailBody, metaInfo);
     }else if(emailType === "text/plain"){
-      let year = new Date(metaInfo.dateRecieved)
-      year = JSON.stringify(year.getFullYear());
-      shiftsInEmail = emailContnetParser_planTextTemplate(emailBody, year)
+      // let year = new Date(metaInfo.dateRecieved)
+      // year = JSON.stringify(year.getFullYear());
+      shiftsInEmail = emailContnetParser_planTextTemplate(emailBody, metaInfo)
     }else{
       //alert me
       throw Error("email_Content_List mapping problem, see index.js line 86 to 99");
@@ -106,31 +101,7 @@ const auto_update_shift = async() => {
 
   console.log(masterSchedule)
 
-  // return email_Content_List
-
-
-
-  /* 
-  parse email
-    need to get: 
-      id, 
-      payload.headers[
-        From, 
-        Subject,
-        Date,(recieved date)
-        Content-Type: 
-          "text/html; charset=ISO-8859-1" (monthly)
-          "text/plain; charset=UTF-8" (weekly)
-      ]
-      payload.mimeType: 
-        "text/plain" || "text/html"
-      body.data
-  */
-
-  /* Phase II: 
-  //interate through the master schedule
-  //make changes to calendar accordingly  
-  */
+  return '//------ End of auto_update_shift ------//'
 }
 
 // console.log('ha')
