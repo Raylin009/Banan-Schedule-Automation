@@ -63,8 +63,7 @@ const emailParser_base64 = (base64Code) => {
       },....
     ]
  */
-const emailContnetParser_htmlTemplate = (content) => {
-  let schedule = [];
+const emailContnetParser_htmlTemplate = (content, metaInfo) => {
   const htmlContent = parse(`<div>${content}</div>`)
   const table = htmlContent.querySelector('.contentTable')
   const triversTableColumns = (tableRow) => {
@@ -93,6 +92,7 @@ const emailContnetParser_htmlTemplate = (content) => {
     let shiftTemp = brShift("HTML",matrix[0]);
     for(let i = 1; i < matrix.length; i +=1 ){
       const curShift = shiftTemp(matrix[i])
+      curShift.emailMetaIndo = metaInfo
       masterSchedule[curShift.date] = curShift;
     }
     return masterSchedule

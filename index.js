@@ -89,7 +89,7 @@ const auto_update_shift = async() => {
     const emailBody = emailParser_base64(email.payload.body.data);
     let shiftsInEmail = {};
     if(emailType === "text/html"){
-      shiftsInEmail = emailContnetParser_htmlTemplate(emailBody);
+      shiftsInEmail = emailContnetParser_htmlTemplate(emailBody, metaInfo);
     }else if(emailType === "text/plain"){
       let year = new Date(metaInfo.dateRecieved)
       year = JSON.stringify(year.getFullYear());
