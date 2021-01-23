@@ -1,4 +1,6 @@
-const { getBREventList, initCalendar } = require('./calendarAPIv2.js');
+const { getBREventList,
+        getBREventByDate,
+        initCalendar } = require('./calendarAPIv2.js');
 const { getMessageList, 
         getMessageContent, 
         parseMessageContent, 
@@ -109,27 +111,79 @@ const auto_update_shift = async() => {
 
 const { exMasterSchedule } = require('./devHelper/exMasterSchedule.js');
 
-const checkCalHasShift = (shiftInfo) => {
+const checkCalHasShift = async (shiftInfo) => {
   const { date, schedule } = shiftInfo;
-  const 
-  // if( 
+  const oneDateRane = (date) => {
+    const stTime = `${date} 00:00:00`;
+    const endTime = `${date} 23:59:59`;
+    return [ new Date(stTime), new Date(endTime)];
+  }
+  const [ stDate, endDate ] = oneDateRane(date);
+  const calShiftThatDate = await getBREventByDate(stDate, endDate)
+  return calShiftThatDate
+};
+
+// const testShift = {
+//   date: '12/27/2020',
+//   schedule: [ '03:00 PM', '07:00 PM' ],
+//   updated: true,
+//   department: '01049_OUTL_SALES_FLOOR',
+//   activity: 'WRK',
+//   store: '01049_OUTL',
+//   job: 'OUT_SALES',
+//   srcEmailInfo: {
+//     id: '176dfab727d9a969',
+//     dateRecieved: 'Fri, 8 Jan 2021 01:45:23 +0000',
+//     from: 'no-reply-ams@infor.com',
+//     subject: "Schedule Change Alert/Alerte de changement d'horaire/Programar alerta de cambio",
+//     content_type: 'text/html; charset=ISO-8859-1'
+//   }
+// }
+// checkCalHasShift(testShift)
+// .then(console.log)
+// .catch(console.log)
+const updateShiftHist = (calShift, shiftInfo_mst, notes) => {
+  console.log("shiftInfo_mst in progress...")
+};
+
+const changeShiftTime = (calShift, shiftInfo_mst) => {
+  console.log("changeShiftTime in progress...")
+  //changeShiftTime
+  //updateShiftHist
+}
+
+const addShift = (shiftInfo_mst) => {
+  console.log("changeShiftTime in progress...")
+  //addShift
+  //updateShiftHist
 }
 
 const addShiftsToCalendar = async(masterSchedule) => {
   //for every shift checking if there is already a shift that date 
 
   for(let shiftDate in masterSchedule){
-    const shiftInfo = masterSchedule[shiftDate];
+    /** BLOCKing ASYNC PROBLEM!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
+    const shiftInfo_mst = masterSchedule[shiftDate];
     //checkShift return bootlean, yes: return shift, no return false
-    const hasShiftAtDate = checkCalHasShift(shiftInfo);
-    if(hasShiftAtDate){
+    const calShift = await checkCalHasShift(shiftInfo_mst);
+    const calHasSameDateShift = calShift.length;
+    const hasShiftAtSameTime = false;
+    if(calHasSameDateShift){
       if(hasShiftAtSameTime){
+        //Patch
+        updateShiftHist(calShift, shiftInfo_mst, "Confirmed, No Changes");
         //event descrip: "updated 01/28/2021 0902, emailId:blah blach"
+
       }else{
+        //Patch
         //change shiftTime to match masterSchedule
+        changeShiftTime(calShift, shiftInfo_mst);
         //event description: "changed from 0400 ro 0800" (lastModdate) to ""0500 to 1100"
       }
     }else{
+      addShift(shiftInfo_mst);
+      //Add
       //addShiftToCal()
     }
   }
@@ -137,9 +191,9 @@ const addShiftsToCalendar = async(masterSchedule) => {
   // return Object.keys(masterSchedule)
 }
 
-addShiftsToCalendar(exMasterSchedule)
-.then(console.log)
-.catch(console.log)
+// addShiftsToCalendar(exMasterSchedule)
+// .then(console.log)
+// .catch(console.log)
 
 
 
