@@ -123,7 +123,7 @@ const getBREventList = async() => {
   })
 }
 
-const getBREventByDate = (stDate, endDate) => {
+const getBREventByDate = async(stDate, endDate) => {
   const credential = await read_credential(CREDE_PATH);
   const auth = await generate_auth(credential, TOKEN_PATH);
   const BRCalendar = await getCalendarListId();
@@ -279,3 +279,4 @@ const initCalendar = async() => {
 
 module.exports.getBREventList = getBREventList;
 module.exports.initCalendar = initCalendar;
+module.exports.getBREventByDate = getBREventByDate;
