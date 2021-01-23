@@ -99,15 +99,15 @@ const auto_update_shift = async() => {
     }
   })
 
-  console.log(masterSchedule)
-
-  return '//------ End of auto_update_shift ------//'
+  // console.log(masterSchedule)
+  return masterSchedule
 }
 
-// console.log('ha')
 auto_update_shift()
 .then(console.log)
 .catch(console.log)
+
+
 
 // get_Email_Content({
 //   userId: 'me',

@@ -1,4 +1,4 @@
-const { email_planText, email_html } = require("./testEmailId");
+const { email_planText, email_html } = require("./devHelper/testEmailId");
 const { brShift } = require("./brShift");
 const { parse } = require("node-html-parser");
 
