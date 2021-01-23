@@ -103,7 +103,33 @@ const auto_update_shift = async() => {
   return masterSchedule
 }
 
-auto_update_shift()
+// auto_update_shift()
+// .then(console.log)
+// .catch(console.log)
+
+const { exMasterSchedule } = require('./devHelper/exMasterSchedule.js')
+
+const addShiftsToCalendar = async(masterSchedule) => {
+  //for every shift checking if there is already a shift that date 
+
+  for(let shiftDate in masterSchedule){
+    const shiftInfo = masterSchedule[shiftDate];
+    //checkShift return bootlean, yes: return shift, no return false
+    const hasShiftAtDate = checkShift(shiftDate, shiftInfo);
+    if(hasShiftAtDate){
+      if(hasSameShiftTime){
+        //event descrip: "updated 01/28/2021 0902, emailId:blah blach"
+      }else{
+        //change shiftTime to match masterSchedule
+        //event description: "changed from 0400 ro 0800" (lastModdate) to ""0500 to 1100"
+      }
+    }
+  }
+
+  // return Object.keys(masterSchedule)
+}
+
+addShiftsToCalendar(exMasterSchedule)
 .then(console.log)
 .catch(console.log)
 

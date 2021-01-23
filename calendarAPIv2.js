@@ -123,6 +123,38 @@ const getBREventList = async() => {
   })
 }
 
+const getBREventByDate = (stDate, endDate) => {
+  const credential = await read_credential(CREDE_PATH);
+  const auth = await generate_auth(credential, TOKEN_PATH);
+  const BRCalendar = await getCalendarListId();
+  const calendar = google.calendar({version: 'v3', auth});
+  return new Promise ((resolve, reject) => {
+    calendar.events.list({
+      calendarId: BRCalendar.id,
+      timeMin: stDate.toISOString(),
+      timeMax: endDate.toISOString(),
+      maxResults: 1,
+      singleEvents: true,
+      orderBy: 'startTime',
+    },  (err, res) => {
+      if (err) {
+        reject(`the APT return an error: ${err}`)}
+      const events = res.data.items;
+      if (events.length) {
+        console.log('upcoming 10 events:');
+        events.map((event, i) => {
+          const start = event.start.dateTime || event.start.date;
+          console.log(`${start} - ${event.summary} - ${event.id}`);
+        });
+        resolve(events);
+      } else {
+        console.log('No upcoming evvents found.');
+        resolve([]);
+      }
+    })
+  })
+}
+
 const findBRCalendar = (arr) =>  {
   const [brCalendar] = arr.filter((ele) => ele.description === 'Banana Republic Schedule')
   return brCalendar
