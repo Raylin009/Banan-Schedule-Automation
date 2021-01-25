@@ -188,18 +188,18 @@ const generateShiftEvent = (shiftInfo_mst) => {
 generateShiftEvent(testShift)
 
 const addShift = async(shiftInfo_mst) => {
-  let newEven = null;
+  let newEvent = null;
   const shiftEvent = generateShiftEvent(shiftInfo_mst)
 
   try{
-    newEven = await addEvent(shiftEvent);
+    newEvent = await addEvent(shiftEvent);
     console.log(`Event ${newEven.id} has been created`);
     console.log(`Event url:${newEven.url}`);
 
   }catch (error){
     console.error(`Error occured in adding shifft for ${shiftInfo_mst.date} from ${shiftInfo_mst.srcEmailInfo.dateRecieved} email ${error}`);
   }
-  return newEven
+  return newEvent
 }
 
 addShift(testShift)
