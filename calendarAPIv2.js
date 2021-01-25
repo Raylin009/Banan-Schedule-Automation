@@ -141,7 +141,7 @@ const getBREventByDate = async(stDate, endDate) => {
         reject(`the APT return an error: ${err}`)}
       const events = res.data.items;
       if (events.length) {
-        console.log('upcoming 10 events:');
+        console.log(`upcoming ${events.length} events:`);
         events.map((event, i) => {
           const start = event.start.dateTime || event.start.date;
           console.log(`${start} - ${event.summary} - ${event.id}`);
@@ -281,3 +281,4 @@ module.exports.initCalendar = initCalendar;
 module.exports.getBREventByDate = getBREventByDate;
 module.exports.addEvent = addEvent;
 module.exports.deleteEvent = deleteEvent;
+module.exports.patch = patch;

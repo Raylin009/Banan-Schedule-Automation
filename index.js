@@ -1,6 +1,7 @@
 const { getBREventList,
         deleteEvent,
         addEvent,
+        patch,
         getBREventByDate,
         initCalendar } = require('./calendarAPIv2.js');
 const { getMessageList, 
@@ -126,7 +127,7 @@ const checkCalHasShift = async (shiftInfo) => {
 };
 
 const testShift = {
-  date: '12/27/2020',
+  date: '01/26/2021',
   schedule: [ '03:00 PM', '07:00 PM' ],
   updated: true,
   department: '01049_OUTL_SALES_FLOOR',
@@ -141,21 +142,65 @@ const testShift = {
     content_type: 'text/html; charset=ISO-8859-1'
   }
 }
+
+const testPatch_Shift = {
+  date: '01/26/2021',
+  schedule: [ '03:00 PM', '07:00 PM' ],
+  updated: true,
+  department: '01049_OUTL_SALES_FLOOR',
+  activity: 'WRK',
+  store: '01049_OUTL',
+  job: 'OUT_SALES',
+  srcEmailInfo: {
+    id: '176dfab727d9a969',
+    dateRecieved: 'Fri, 8 Jan 2021 01:45:23 +0000',
+    from: 'no-reply-ams@infor.com',
+    subject: "Schedule Change Alert/Alerte de changement d'horaire/Programar alerta de cambio",
+    content_type: 'text/html; charset=ISO-8859-1'
+  }
+}
+
 // checkCalHasShift(testShift)
 // .then(console.log)
 // .catch(console.log)
 const updateShiftHist = (calShift, shiftInfo_mst, notes) => {
   console.log("shiftInfo_mst in progress...")
 };
+const addShift = async(shiftInfo_mst) => {
+  let newEvent = null;
+  const shiftEvent = generateShiftEvent(shiftInfo_mst)
 
-const changeShiftTime = (calShift, shiftInfo_mst) => {
-  console.log("changeShiftTime in progress...")
-  //changeShiftTime
-  //updateShiftHist
+  try{
+    newEvent = await addEvent(shiftEvent);
+    // console.log(`Event ${newEven.id} has been created`);
+    // console.log(`Event url:${newEven.url}`);
+
+  }catch (error){
+    console.error(`Error occured in adding shifft for ${shiftInfo_mst.date} from ${shiftInfo_mst.srcEmailInfo.dateRecieved} email ${error}`);
+  }
+  return newEvent
 }
 
+// addShift(testShift)
+// .then(console.log)
+// .catch(console.log)
 
-const generateShiftEvent = (shiftInfo_mst) => {
+const changeShiftTime = (calShift, shiftInfo_mst) => {
+
+}
+
+const testChangeShift = async() => {
+  const {newShiftId, newShiftUrl} = await addShift(testShift);
+  const calSH = await getBREventByDate(new Date('01/26/2021 00:00:00'), new Date('01/26/2021 23:59:59'));
+  changeShiftTime(calShift, )
+}
+
+testChangeShift()
+.then(console.log)
+.catch(console.log)
+
+
+function generateShiftEvent(shiftInfo_mst) {
   const dateTimeStr = (date, time) => {
     return new Date(`${date} ${time}`).toISOString();
   }
@@ -183,31 +228,7 @@ const generateShiftEvent = (shiftInfo_mst) => {
     },
   };
   return calEvenResource;
-}
-
-generateShiftEvent(testShift)
-
-const addShift = async(shiftInfo_mst) => {
-  let newEvent = null;
-  const shiftEvent = generateShiftEvent(shiftInfo_mst)
-
-  try{
-    newEvent = await addEvent(shiftEvent);
-    console.log(`Event ${newEven.id} has been created`);
-    console.log(`Event url:${newEven.url}`);
-
-  }catch (error){
-    console.error(`Error occured in adding shifft for ${shiftInfo_mst.date} from ${shiftInfo_mst.srcEmailInfo.dateRecieved} email ${error}`);
-  }
-  return newEvent
-}
-
-addShift(testShift)
-.then(console.log)
-.catch(console.log)
-
-
-
+};
 
 
 const addShiftsToCalendar = async(masterSchedule) => {
