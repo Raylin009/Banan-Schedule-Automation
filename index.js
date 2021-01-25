@@ -1,4 +1,6 @@
 const { getBREventList,
+        deleteEvent,
+        addEvent,
         getBREventByDate,
         initCalendar } = require('./calendarAPIv2.js');
 const { getMessageList, 
@@ -123,22 +125,22 @@ const checkCalHasShift = async (shiftInfo) => {
   return calShiftThatDate
 };
 
-// const testShift = {
-//   date: '12/27/2020',
-//   schedule: [ '03:00 PM', '07:00 PM' ],
-//   updated: true,
-//   department: '01049_OUTL_SALES_FLOOR',
-//   activity: 'WRK',
-//   store: '01049_OUTL',
-//   job: 'OUT_SALES',
-//   srcEmailInfo: {
-//     id: '176dfab727d9a969',
-//     dateRecieved: 'Fri, 8 Jan 2021 01:45:23 +0000',
-//     from: 'no-reply-ams@infor.com',
-//     subject: "Schedule Change Alert/Alerte de changement d'horaire/Programar alerta de cambio",
-//     content_type: 'text/html; charset=ISO-8859-1'
-//   }
-// }
+const testShift = {
+  date: '12/27/2020',
+  schedule: [ '03:00 PM', '07:00 PM' ],
+  updated: true,
+  department: '01049_OUTL_SALES_FLOOR',
+  activity: 'WRK',
+  store: '01049_OUTL',
+  job: 'OUT_SALES',
+  srcEmailInfo: {
+    id: '176dfab727d9a969',
+    dateRecieved: 'Fri, 8 Jan 2021 01:45:23 +0000',
+    from: 'no-reply-ams@infor.com',
+    subject: "Schedule Change Alert/Alerte de changement d'horaire/Programar alerta de cambio",
+    content_type: 'text/html; charset=ISO-8859-1'
+  }
+}
 // checkCalHasShift(testShift)
 // .then(console.log)
 // .catch(console.log)
@@ -152,11 +154,61 @@ const changeShiftTime = (calShift, shiftInfo_mst) => {
   //updateShiftHist
 }
 
-const addShift = (shiftInfo_mst) => {
-  console.log("changeShiftTime in progress...")
-  //addShift
-  //updateShiftHist
+
+const generateShiftEvent = (shiftInfo_mst) => {
+  const dateTimeStr = (date, time) => {
+    return new Date(`${date} ${time}`).toISOString();
+  }
+  const stDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[0])
+  const endDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[1])
+  const calEvenResource = {
+    'summary': 'test',
+    'location': '2990 Livermore Outlets Dr SUITE 2990, Livermore, CA 94551',
+    'description': 'description secription',
+    'start': {
+      'dateTime': stDate,
+      'timeZone': 'America/Los_Angeles',
+    },
+    'end': {
+      'dateTime': endDate,
+      'timeZone': 'America/Los_Angeles',
+    },
+    'attendees': [
+    ],
+    'reminders': {
+      'useDefault': false,
+      'overrides': [
+        {'method': 'popup', 'minutes': 10},
+      ],
+    },
+  };
+  return calEvenResource;
 }
+
+generateShiftEvent(testShift)
+
+const addShift = async(shiftInfo_mst) => {
+  let newEven = null;
+  const shiftEvent = generateShiftEvent(shiftInfo_mst)
+
+  try{
+    newEven = await addEvent(shiftEvent);
+    console.log(`Event ${newEven.id} has been created`);
+    console.log(`Event url:${newEven.url}`);
+
+  }catch (error){
+    console.error(`Error occured in adding shifft for ${shiftInfo_mst.date} from ${shiftInfo_mst.srcEmailInfo.dateRecieved} email ${error}`);
+  }
+  return newEven
+}
+
+addShift(testShift)
+.then(console.log)
+.catch(console.log)
+
+
+
+
 
 const addShiftsToCalendar = async(masterSchedule) => {
   //for every shift checking if there is already a shift that date 

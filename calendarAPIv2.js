@@ -199,7 +199,6 @@ var event = {
   'reminders': {
     'useDefault': false,
     'overrides': [
-      {'method': 'email', 'minutes': 24 * 60},
       {'method': 'popup', 'minutes': 10},
     ],
   },
@@ -221,7 +220,7 @@ const addEvent = async(event) => {
         return
       }
       console.log('Event created: %s', res.data.htmlLink);
-      resolve(res.data.id)
+      resolve({id:res.data.id, url:res.data.htmlLink});
     });
   })
 }
@@ -280,3 +279,5 @@ const initCalendar = async() => {
 module.exports.getBREventList = getBREventList;
 module.exports.initCalendar = initCalendar;
 module.exports.getBREventByDate = getBREventByDate;
+module.exports.addEvent = addEvent;
+module.exports.deleteEvent = deleteEvent;
