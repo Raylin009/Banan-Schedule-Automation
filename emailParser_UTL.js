@@ -1,4 +1,4 @@
-const { email_planText, email_html } = require("./testEmailId");
+const { email_planText, email_html } = require("./devHelper/testEmailId");
 const { brShift } = require("./brShift");
 const { parse } = require("node-html-parser");
 
@@ -50,8 +50,8 @@ const emailParser_base64 = (base64Code) => {
 
 /**
   emailContnetParser_htmlTemplate
-    Input: email content with HTML template, string
-    output: [
+    Input: email content with HTML template, "" | metaInfo {}
+    output:
       { stDate,
         stTime,
         endDate,
@@ -60,11 +60,11 @@ const emailParser_base64 = (base64Code) => {
         job,
         store,
         department,
+        srcEmailInfo: metaInfo
       },....
     ]
  */
-const emailContnetParser_htmlTemplate = (content) => {
-  let schedule = [];
+const emailContnetParser_htmlTemplate = (content, metaInfo) => {
   const htmlContent = parse(`<div>${content}</div>`)
   const table = htmlContent.querySelector('.contentTable')
   const triversTableColumns = (tableRow) => {
@@ -93,6 +93,7 @@ const emailContnetParser_htmlTemplate = (content) => {
     let shiftTemp = brShift("HTML",matrix[0]);
     for(let i = 1; i < matrix.length; i +=1 ){
       const curShift = shiftTemp(matrix[i])
+      curShift.srcEmailInfo = metaInfo
       masterSchedule[curShift.date] = curShift;
     }
     return masterSchedule
@@ -129,14 +130,7 @@ const plTxtSpliter = (regRule) => {
   };
 };
 
-const emailContnetParser_planTextTemplate = (content, year) => {
-  // const splitEverything = (pTxtTempStr) => {
-  //   const splitRule = new RegExp(/(\r\n\r\n|\r\n|,\s|\s\s)/g);
-  //   const splitIndex = '|_split_|';
-  //   return pTxtTempStr.replace(splitRule, splitIndex).split(splitIndex)
-  // }
-  // return splitEverything(content)
-
+const emailContnetParser_planTextTemplate = (content, metaInfo) => {
   const splitByRule = (regRule) => {
     const splitIndex = '|_split_|';
     return (str) => {
@@ -156,40 +150,36 @@ const emailContnetParser_planTextTemplate = (content, year) => {
     }
   )
   const masterSchedule = {};
+  const getDurationFromSubject = (subjectStr) => {
+    const strL = subjectStr.length;
+    const yearStr = subjectStr.slice(strL-23);
+    const [st, end] = yearStr.split(' - ');
+    const [stM, stD, stY] = st.split('/');
+    const [endM, endD, endY] = end.split('/');
+    const duration = {
+      [stM]: stY,
+      [endM]: endY,
+    }
+    return duration;
+  }
+  const monthToYear = getDurationFromSubject(metaInfo.subject)
 
   scheduleArr.forEach((shiftArr) => {
     const shift = brShift("PLAN_TEXT", shiftArr);
-    const shiftDate = `${shift.date}/${year}`
-    masterSchedule[shiftDate] = {...shift, date: shiftDate}
-  });
-
-  const handleNewYear = (scheduleObj) => {
-    const dateArr = Object.keys(scheduleObj);
-    const getMonth = (str)=>(str.slice(0,2));
-    const stMonth = getMonth(dateArr[0]);
-    const lastMonth = getMonth(dateArr[dateArr.length - 1]);
-    if(stMonth === '12' && lastMonth === '01'){
-      dateArr.forEach((key)=> {
-        const [m,d,y] = key.split('/');
-        const nextY = JSON.stringify(parseInt(y) + 1)
-        const nextYDateStr = `${m}/${d}/${nextY}`;
-        if(getMonth(key) === '01'){
-          const updatedShift = {
-            ...scheduleObj[key],
-            date: nextYDateStr,
-          };
-          delete scheduleObj[key];
-          scheduleObj[nextYDateStr] = updatedShift;
-        }
-      })
+    const [mm, dd] = shift.date.split('/')
+    const shiftDate = `${shift.date}/${monthToYear[mm]}`
+    masterSchedule[shiftDate] = {
+      ...shift,
+      date: shiftDate,
+      srcEmailInfo: metaInfo,
     }
-  };
-  handleNewYear(masterSchedule);
+  });
   return masterSchedule
 };
 const test64 = emailParser_base64(email_planText.payload.body.data);
-const testPlanText = emailContnetParser_planTextTemplate(test64, 2020)
-console.log(testPlanText);
+const metaInfo = getEmailMetaInfo(email_planText)
+const testPlanText = emailContnetParser_planTextTemplate(test64, metaInfo)
+// console.log(testPlanText);
 
 module.exports.getEmailMetaInfo = getEmailMetaInfo;
 module.exports.emailParser_base64 = emailParser_base64;
