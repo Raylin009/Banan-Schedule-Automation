@@ -2,8 +2,8 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-const TOKEN_PATH = 'calendarToken.json';
-const CREDE_PATH = 'calendarCredentials.json';
+const TOKEN_PATH = './credentials/calendarToken.json';
+const CREDE_PATH = './credentials/calendarCredentials.json';
 
 const read_credential = (path) => {
   return new Promise ((resolve, reject) => {
