@@ -251,8 +251,12 @@ const patch = async(event) => {
   const auth = await generate_auth(credential, TOKEN_PATH);
   const BRCalendar = await getCalendarListId();
   const calendar = google.calendar({version: 'v3', auth});
+  console.log(BRCalendar.id);
   return new Promise ((resolve, reject) => {
-    calendar.events.patch(event, (err, res) => {
+    calendar.events.patch({
+      calendarId: BRCalendar.id,
+      ...event
+    }, (err, res) => {
       if (err) {
         reject(err)
         return

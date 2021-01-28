@@ -145,7 +145,7 @@ const testShift = {
 
 const testPatch_Shift = {
   date: '01/26/2021',
-  schedule: [ '03:00 PM', '07:00 PM' ],
+  schedule: [ '02:00 PM', '08:00 PM' ],
   updated: true,
   department: '01049_OUTL_SALES_FLOOR',
   activity: 'WRK',
@@ -186,13 +186,32 @@ const addShift = async(shiftInfo_mst) => {
 // .catch(console.log)
 
 const changeShiftTime = (calShift, shiftInfo_mst) => {
+  const dateTimeStr = (date, time) => {
+    return new Date(`${date} ${time}`).toISOString();
+  }
+  const stDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[0])
+  const endDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[1])
+  console.log("stDate",stDate)
+  console.log("endDate",endDate)
 
+  patch({
+    // eventId: calShift.id,
+    eventId: "8um4fnv74r4nu5l5b029cph480",
+    start:{
+      dateTime: "2021-01-26T22:00:00.000Z",
+    },
+    end: {
+      dateTime: "2021-01-27T04:00:00.000Z",
+    }
+  })
+  .then(console.log)
+  .catch(console.log)
 }
 
 const testChangeShift = async() => {
   const {newShiftId, newShiftUrl} = await addShift(testShift);
-  const calSH = await getBREventByDate(new Date('01/26/2021 00:00:00'), new Date('01/26/2021 23:59:59'));
-  changeShiftTime(calShift, testPatch_Shift)
+  const [calSH] = await getBREventByDate(new Date('01/26/2021 00:00:00'), new Date('01/26/2021 23:59:59'));
+  changeShiftTime(calSH, testPatch_Shift)
 }
 
 testChangeShift()
@@ -207,7 +226,7 @@ function generateShiftEvent(shiftInfo_mst) {
   const stDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[0])
   const endDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[1])
   const calEvenResource = {
-    'summary': 'test',
+    'summary': '3to7 -> 2to8',
     'location': '2990 Livermore Outlets Dr SUITE 2990, Livermore, CA 94551',
     'description': 'description secription',
     'start': {
