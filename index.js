@@ -192,7 +192,7 @@ const changeShiftTime = (calShift, shiftInfo_mst) => {
 const testChangeShift = async() => {
   const {newShiftId, newShiftUrl} = await addShift(testShift);
   const calSH = await getBREventByDate(new Date('01/26/2021 00:00:00'), new Date('01/26/2021 23:59:59'));
-  changeShiftTime(calShift, )
+  changeShiftTime(calShift, testPatch_Shift)
 }
 
 testChangeShift()
