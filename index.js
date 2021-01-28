@@ -80,6 +80,7 @@ const auto_update_shift = async() => {
   const email_Content_List = await Promise.all(
     email_Id_List.map((ele) => (getMessageContent(ele.id)))
   )
+  console.log(email_Content_List)
   //*** HAVE EMAIL CONTENT ARRAY */
   let masterSchedule = {};
 
@@ -98,9 +99,20 @@ const auto_update_shift = async() => {
       //alert me
       throw Error("email_Content_List mapping problem, see index.js line 86 to 99");
     }
-    masterSchedule = {
-      ...masterSchedule,
-      ...shiftsInEmail,
+    // masterSchedule = {
+    //   ...masterSchedule,
+    //   ...shiftsInEmail,
+    // }
+    for(let key in shiftsInEmail){
+      if(!masterSchedule[key]){
+        masterSchedule[key] = shiftsInEmail[key]
+      }else{
+        const masterDate = new Date(masterSchedule[key].dateRecieved)
+        const curDate = new Date(shiftsInEmail[key].dateRecieved)
+        if(curDate > masterDate){
+          masterSchedule[key] = shiftsInEmail[key]
+        }
+      }
     }
   })
 
@@ -108,9 +120,9 @@ const auto_update_shift = async() => {
   return masterSchedule
 }
 
-// auto_update_shift()
-// .then(console.log)
-// .catch(console.log)
+auto_update_shift()
+.then(console.log)
+.catch(console.log)
 
 const { exMasterSchedule } = require('./devHelper/exMasterSchedule.js');
 
@@ -214,9 +226,9 @@ const testChangeShift = async() => {
   changeShiftTime(calSH, testPatch_Shift)
 }
 
-testChangeShift()
-.then(console.log)
-.catch(console.log)
+// testChangeShift()
+// .then(console.log)
+// .catch(console.log)
 
 
 function generateShiftEvent(shiftInfo_mst) {
