@@ -70,7 +70,7 @@ const auto_update_shift = async() => {
     userId: 'me',
     includeSpamTrash: false,
     labelIds: 'INBOX',
-    maxResults: 5,
+    maxResults: 3,
     q: 'from:no-reply-ams@infor.com'
   };
   const email_Id_List = await get_Email_Ids(emailListParam)
@@ -80,7 +80,7 @@ const auto_update_shift = async() => {
   const email_Content_List = await Promise.all(
     email_Id_List.map((ele) => (getMessageContent(ele.id)))
   )
-  console.log(email_Content_List)
+  // console.log(email_Content_List)
   //*** HAVE EMAIL CONTENT ARRAY */
   let masterSchedule = {};
 
@@ -120,9 +120,10 @@ const auto_update_shift = async() => {
   return masterSchedule
 }
 
-auto_update_shift()
-.then(console.log)
-.catch(console.log)
+// auto_update_shift()
+// .then()
+// // .then((data) => console.log(Object.keys(data).length))
+// .catch(console.log)
 
 const { exMasterSchedule } = require('./devHelper/exMasterSchedule.js');
 
@@ -155,22 +156,7 @@ const testShift = {
   }
 }
 
-const testPatch_Shift = {
-  date: '01/26/2021',
-  schedule: [ '02:00 PM', '08:00 PM' ],
-  updated: true,
-  department: '01049_OUTL_SALES_FLOOR',
-  activity: 'WRK',
-  store: '01049_OUTL',
-  job: 'OUT_SALES',
-  srcEmailInfo: {
-    id: '176dfab727d9a969',
-    dateRecieved: 'Fri, 8 Jan 2021 01:45:23 +0000',
-    from: 'no-reply-ams@infor.com',
-    subject: "Schedule Change Alert/Alerte de changement d'horaire/Programar alerta de cambio",
-    content_type: 'text/html; charset=ISO-8859-1'
-  }
-}
+
 
 // checkCalHasShift(testShift)
 // .then(console.log)
@@ -181,16 +167,11 @@ const updateShiftHist = (calShift, shiftInfo_mst, notes) => {
 const addShift = async(shiftInfo_mst) => {
   let newEvent = null;
   const shiftEvent = generateShiftEvent(shiftInfo_mst)
-
   try{
     newEvent = await addEvent(shiftEvent);
-    // console.log(`Event ${newEven.id} has been created`);
-    // console.log(`Event url:${newEven.url}`);
-
   }catch (error){
     console.error(`Error occured in adding shifft for ${shiftInfo_mst.date} from ${shiftInfo_mst.srcEmailInfo.dateRecieved} email ${error}`);
   }
-  return newEvent
 }
 
 // addShift(testShift)
@@ -198,32 +179,35 @@ const addShift = async(shiftInfo_mst) => {
 // .catch(console.log)
 
 const changeShiftTime = (calShift, shiftInfo_mst) => {
-  const dateTimeStr = (date, time) => {
-    return new Date(`${date} ${time}`).toISOString();
-  }
-  const stDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[0])
-  const endDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[1])
-  console.log("stDate",stDate)
-  console.log("endDate",endDate)
+  console.log("changeShiftTime Inprogress...")
+  // const dateTimeStr = (date, time) => {
+  //   return new Date(`${date} ${time}`).toISOString();
+  // }
+  // const stDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[0])
+  // const endDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[1])
+  // console.log("stDate",stDate)
+  // console.log("endDate",endDate)
 
-  patch({
-    // eventId: calShift.id,
-    eventId: "8um4fnv74r4nu5l5b029cph480",
-    start:{
-      dateTime: "2021-01-26T22:00:00.000Z",
-    },
-    end: {
-      dateTime: "2021-01-27T04:00:00.000Z",
-    }
-  })
-  .then(console.log)
-  .catch(console.log)
+  // patch({
+  //   // eventId: calShift.id,
+  //   eventId: "8um4fnv74r4nu5l5b029cph480",
+  //   start:{
+  //     dateTime: "2021-01-26T22:00:00.000Z",
+  //   },
+  //   end: {
+  //     dateTime: "2021-01-27T04:00:00.000Z",
+  //   }
+  // })
+  // .then(console.log)
+  // .catch(console.log)
 }
 
 const testChangeShift = async() => {
-  const {newShiftId, newShiftUrl} = await addShift(testShift);
+  const {id, url} = await addShift(testShift);
   const [calSH] = await getBREventByDate(new Date('01/26/2021 00:00:00'), new Date('01/26/2021 23:59:59'));
-  changeShiftTime(calSH, testPatch_Shift)
+  // changeShiftTime(calSH, testPatch_Shift)
+  // console.log('newShiftId', id)
+  // console.log(calSH)
 }
 
 // testChangeShift()
@@ -238,9 +222,9 @@ function generateShiftEvent(shiftInfo_mst) {
   const stDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[0])
   const endDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[1])
   const calEvenResource = {
-    'summary': '3to7 -> 2to8',
+    'summary': `Banana ${shiftInfo_mst.schedule[0]} - ${shiftInfo_mst.schedule[1]}`,
     'location': '2990 Livermore Outlets Dr SUITE 2990, Livermore, CA 94551',
-    'description': 'description secription',
+    'description': `${JSON.stringify(shiftInfo_mst)}\n${JSON.stringify(shiftInfo_mst.srcEmailInfo)}`,
     'start': {
       'dateTime': stDate,
       'timeZone': 'America/Los_Angeles',
@@ -263,41 +247,44 @@ function generateShiftEvent(shiftInfo_mst) {
 
 
 const addShiftsToCalendar = async(masterSchedule) => {
-  //for every shift checking if there is already a shift that date 
-
   for(let shiftDate in masterSchedule){
-    /** BLOCKing ASYNC PROBLEM!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
     const shiftInfo_mst = masterSchedule[shiftDate];
-    //checkShift return bootlean, yes: return shift, no return false
     const calShift = await checkCalHasShift(shiftInfo_mst);
-    const calHasSameDateShift = calShift.length;
-    const hasShiftAtSameTime = false;
-    if(calHasSameDateShift){
-      if(hasShiftAtSameTime){
-        //Patch
-        updateShiftHist(calShift, shiftInfo_mst, "Confirmed, No Changes");
-        //event descrip: "updated 01/28/2021 0902, emailId:blah blach"
-
-      }else{
-        //Patch
-        //change shiftTime to match masterSchedule
-        changeShiftTime(calShift, shiftInfo_mst);
-        //event description: "changed from 0400 ro 0800" (lastModdate) to ""0500 to 1100"
+    const existingShift = calShift;
+    if(shiftInfo_mst.schedule.length){
+      if(existingShift.length){
+        const existingShiftId = existingShift[0].id;
+        // console.log("existingShift", existingShift)
+        deleteEvent(existingShiftId)
+        .then(console.log)
+        .catch(console.log)
+        // .then(console.log(`Deleted shift named "${calHasSameDateShift[0].summary}"`));
       }
+  
+      addShift(shiftInfo_mst)
+      // .then(console.log)
+      .catch(console.log)
     }else{
-      addShift(shiftInfo_mst);
-      //Add
-      //addShiftToCal()
+      if(existingShift.length){
+        const existingShiftId = existingShift[0].id;
+        deleteEvent(existingShiftId)
+        .then(console.log)
+        .catch(console.log)
+      }
     }
-  }
 
-  // return Object.keys(masterSchedule)
+    // .then(console.log(`Added shift on ${shiftDate} from ${shiftInfo_mst.schedule[0]} to ${shiftInfo_mst.schedule[1]}`));
+
+  }
+  return "addShiftsToCalendar complete"
 }
 
-// addShiftsToCalendar(exMasterSchedule)
-// .then(console.log)
-// .catch(console.log)
+const { hasShift, noShift} = require('./devHelper/exMasterSchedule.js');
+
+auto_update_shift()
+.then((data) => addShiftsToCalendar(data))
+.then(console.log)
+.catch(console.log)
 
 
 

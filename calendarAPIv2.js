@@ -144,11 +144,11 @@ const getBREventByDate = async(stDate, endDate) => {
         console.log(`upcoming ${events.length} events:`);
         events.map((event, i) => {
           const start = event.start.dateTime || event.start.date;
-          console.log(`${start} - ${event.summary} - ${event.id}`);
+          console.log('getBREventByDate Found shift',`${start} - ${event.summary} - ${event.id}`);
         });
         resolve(events);
       } else {
-        console.log('No upcoming evvents found.');
+        console.log('No events found.');
         resolve([]);
       }
     })
@@ -253,7 +253,7 @@ const patch = async(event) => {
   const calendar = google.calendar({version: 'v3', auth});
   return new Promise ((resolve, reject) => {
     calendar.events.patch({
-      calendarId: BRCalendar.id,
+      'calendarId': BRCalendar.id,
       ...event
     }, (err, res) => {
       if (err) {
