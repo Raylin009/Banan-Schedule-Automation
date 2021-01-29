@@ -2,8 +2,8 @@ const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-const TOKEN_PATH = 'calendarToken.json';
-const CREDE_PATH = 'calendarCredentials.json';
+const TOKEN_PATH = './credentials/calendarToken.json';
+const CREDE_PATH = './credentials/calendarCredentials.json';
 
 const read_credential = (path) => {
   return new Promise ((resolve, reject) => {
@@ -144,11 +144,11 @@ const getBREventByDate = async(stDate, endDate) => {
         console.log(`upcoming ${events.length} events:`);
         events.map((event, i) => {
           const start = event.start.dateTime || event.start.date;
-          console.log(`${start} - ${event.summary} - ${event.id}`);
+          console.log('getBREventByDate Found shift',`${start} - ${event.summary} - ${event.id}`);
         });
         resolve(events);
       } else {
-        console.log('No upcoming evvents found.');
+        console.log('No events found.');
         resolve([]);
       }
     })
@@ -252,7 +252,10 @@ const patch = async(event) => {
   const BRCalendar = await getCalendarListId();
   const calendar = google.calendar({version: 'v3', auth});
   return new Promise ((resolve, reject) => {
-    calendar.events.patch(event, (err, res) => {
+    calendar.events.patch({
+      'calendarId': BRCalendar.id,
+      ...event
+    }, (err, res) => {
       if (err) {
         reject(err)
         return
