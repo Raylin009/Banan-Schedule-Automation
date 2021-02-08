@@ -140,5 +140,22 @@ loop through all the dates
     I got to read the html template with the next of "node-html-parser"
     I got to trivers the html table columns
 
+  02.08.2021
+  fixing bug:
+
+  Google Calendar API limits the number of request persecond. That is why I'm getting "There was an error contacting the Calendar service: Error: Rate Limit Exceeded" error message.
+
+  Lessons learned:
+  * Read and understand the error message next time before you start delete code
+  * Watch out for your assumption. I assume my app has bug which turns wasn't why my app is crashing (I mean not exactly)
+
+  fixing bug:
+
+  my code can't read "04:00PM" it can only read "04:00 PM"
+
+
+
+
+
 
 
