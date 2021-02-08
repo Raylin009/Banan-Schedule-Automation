@@ -282,8 +282,17 @@ const addShiftsToCalendar = async(masterSchedule) => {
 const { hasShift, noShift} = require('./devHelper/exMasterSchedule.js');
 
 auto_update_shift()
-.then((data) => addShiftsToCalendar(data))
-.then(console.log)
+// .then((data) => addShiftsToCalendar(data))
+.then((data) => {
+  const arr = Object.keys(data).sort((a,b)=> {
+    const dateA = Date.parse(new Date(a));
+    const dateB = Date.parse(new Date(b))
+    return dateA - dateB;
+  })
+  arr.forEach((ele) => {
+    console.log(ele, data[ele].schedule)
+  })
+})
 .catch(console.log)
 
 
