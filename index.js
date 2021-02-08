@@ -217,10 +217,16 @@ const testChangeShift = async() => {
 
 function generateShiftEvent(shiftInfo_mst) {
   const dateTimeStr = (date, time) => {
+    if(!time.includes(' ')){
+      /* to handle '04:00PM' and '04:00 PM' */
+      const parsedTime = `${time.trim().substring(0,5)} ${time.trim().substring(time.length-2)}`
+      return new Date(`${date} ${parsedTime}`).toISOString();
+    }
     return new Date(`${date} ${time}`).toISOString();
   }
   const stDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[0])
   const endDate = dateTimeStr(shiftInfo_mst.date, shiftInfo_mst.schedule[1])
+
   const calEvenResource = {
     'summary': `Banana ${shiftInfo_mst.schedule[0]} - ${shiftInfo_mst.schedule[1]}`,
     'location': '2990 Livermore Outlets Dr SUITE 2990, Livermore, CA 94551',
@@ -249,28 +255,10 @@ function generateShiftEvent(shiftInfo_mst) {
 const addShiftsToCalendar = async(masterSchedule) => {
   for(let shiftDate in masterSchedule){
     const shiftInfo_mst = masterSchedule[shiftDate];
-    const calShift = await checkCalHasShift(shiftInfo_mst);
-    const existingShift = calShift;
     if(shiftInfo_mst.schedule.length){
-      if(existingShift.length){
-        const existingShiftId = existingShift[0].id;
-        // console.log("existingShift", existingShift)
-        deleteEvent(existingShiftId)
-        .then(console.log)
-        .catch(console.log)
-        // .then(console.log(`Deleted shift named "${calHasSameDateShift[0].summary}"`));
-      }
-  
       addShift(shiftInfo_mst)
       // .then(console.log)
       .catch(console.log)
-    }else{
-      if(existingShift.length){
-        const existingShiftId = existingShift[0].id;
-        deleteEvent(existingShiftId)
-        .then(console.log)
-        .catch(console.log)
-      }
     }
 
     // .then(console.log(`Added shift on ${shiftDate} from ${shiftInfo_mst.schedule[0]} to ${shiftInfo_mst.schedule[1]}`));
@@ -282,17 +270,25 @@ const addShiftsToCalendar = async(masterSchedule) => {
 const { hasShift, noShift} = require('./devHelper/exMasterSchedule.js');
 
 auto_update_shift()
-// .then((data) => addShiftsToCalendar(data))
-.then((data) => {
-  const arr = Object.keys(data).sort((a,b)=> {
-    const dateA = Date.parse(new Date(a));
-    const dateB = Date.parse(new Date(b))
-    return dateA - dateB;
-  })
-  arr.forEach((ele) => {
-    console.log(ele, data[ele].schedule)
-  })
-})
+// .then((data) => {
+//   return {
+//     '02/14/2021':data['02/14/2021'],
+//     '02/16/2021':data['02/16/2021'],
+//     '02/17/2021':data['02/17/2021'],
+//   }
+// })
+// .then(console.log)
+.then((data) => addShiftsToCalendar(data))
+// .then((data) => {
+//   const arr = Object.keys(data).sort((a,b)=> {
+//     const dateA = Date.parse(new Date(a));
+//     const dateB = Date.parse(new Date(b))
+//     return dateA - dateB;
+//   })
+//   arr.forEach((ele) => {
+//     console.log(ele, data[ele].schedule)
+//   })
+// })
 .catch(console.log)
 
 
