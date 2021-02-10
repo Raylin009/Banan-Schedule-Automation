@@ -152,6 +152,9 @@ loop through all the dates
   fixing bug:
 
   my code can't read "04:00PM" it can only read "04:00 PM"
+  [fixed 02/08/2020]
+
+  Need to resolve API rate limit issue
 
 
 
