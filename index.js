@@ -1,7 +1,4 @@
-const { getBREventList,
-        deleteEvent,
-        addEvent,
-        patch,
+const { addEvent,
         getBREventByDate,
         initCalendar } = require('./calendarAPIv2.js');
 const { getMessageList, 
@@ -260,9 +257,6 @@ const addShiftsToCalendar = async(masterSchedule) => {
       .then((res) => setTimeout(()=>{return res}, 5))
       .catch(console.log)
     }
-
-    // .then(console.log(`Added shift on ${shiftDate} from ${shiftInfo_mst.schedule[0]} to ${shiftInfo_mst.schedule[1]}`));
-
   }
   return "addShiftsToCalendar complete"
 }
@@ -270,14 +264,6 @@ const addShiftsToCalendar = async(masterSchedule) => {
 const { hasShift, noShift} = require('./devHelper/exMasterSchedule.js');
 
 auto_update_shift()
-// .then((data) => {
-//   return {
-//     '02/14/2021':data['02/14/2021'],
-//     '02/16/2021':data['02/16/2021'],
-//     '02/17/2021':data['02/17/2021'],
-//   }
-// })
-// .then(console.log)
 .then((data) => {
   for(key in data){
     const today = Date.now()
@@ -300,13 +286,3 @@ auto_update_shift()
 //   })
 // })
 .catch(console.log)
-
-
-
-// get_Email_Content({
-//   userId: 'me',
-//   id: '176794e0d843c7c5',
-//   format: "full",
-// })
-// .then(console.log)
-// .catch(console.log)
