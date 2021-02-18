@@ -256,8 +256,8 @@ const addShiftsToCalendar = async(masterSchedule) => {
   for(let shiftDate in masterSchedule){
     const shiftInfo_mst = masterSchedule[shiftDate];
     if(shiftInfo_mst.schedule.length){
-      addShift(shiftInfo_mst)
-      // .then(console.log)
+      await addShift(shiftInfo_mst)
+      .then((res) => setTimeout(()=>{return res}, 5))
       .catch(console.log)
     }
 
@@ -278,6 +278,16 @@ auto_update_shift()
 //   }
 // })
 // .then(console.log)
+.then((data) => {
+  for(key in data){
+    const today = Date.now()
+    const curShiftDate = new Date(key)
+    if(curShiftDate < today){
+      delete data[key]
+    }
+  }
+  return data
+})
 .then((data) => addShiftsToCalendar(data))
 // .then((data) => {
 //   const arr = Object.keys(data).sort((a,b)=> {
